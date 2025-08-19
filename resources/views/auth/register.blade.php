@@ -18,14 +18,17 @@
     <div class="min-h-screen flex flex-col items-center justify-center bg-white/90 md:bg-transparent">
         <div class="grid md:grid-cols-2 items-center gap-8 max-w-7xl w-full p-4 m-4 rounded-md">
 
+
             <div class="md:max-w-xl w-full px-8 py-8 bg-white rounded-xl shadow-lg">
                 <form action="{{ route('register.post') }}" method="POST">
                     @csrf
                     <div class="flex flex-col gap-6 items-center">
 
+
                         <div class="flex items-center gap-2">
                             <img src="/images/logo.png" alt="TripMe Logo" class="h-16">
                         </div>
+
 
                         <h2 class="text-2xl font-bold text-gray-800">
                             Join <span class="text-[#ff6c54]">TripMe</span>
@@ -53,6 +56,7 @@
 
                     <div class="flex flex-col gap-6 mt-8">
 
+
                         <div class="grid grid-cols-2 gap-4">
                             <div class="flex flex-col gap-2">
                                 <label class="text-sm font-medium text-gray-700">First Name</label>
@@ -69,12 +73,16 @@
                         </div>
 
 
+
+
                         <div class="flex flex-col gap-2">
                             <label class="text-sm font-medium text-gray-700">Email</label>
                             <input name="email" type="email" required value="{{ old('email') }}"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                                 placeholder="your@email.com" />
                         </div>
+
+
 
 
                         <div class="flex flex-col gap-2">
@@ -85,6 +93,8 @@
                         </div>
 
 
+
+
                         <div class="flex flex-col gap-2">
                             <label class="text-sm font-medium text-gray-700">Phone</label>
                             <input name="phone" type="tel" value="{{ old('phone') }}"
@@ -93,12 +103,15 @@
                         </div>
 
 
+
+
                         <div class="flex flex-col gap-2">
                             <label class="text-sm font-medium text-gray-700">Password</label>
                             <div class="relative">
                                 <input name="password" id="password" type="password" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                                     placeholder="Enter your password" />
+                                <button type="button" onclick="togglePasswordVisibility('password')"
                                 <button type="button" onclick="togglePasswordVisibility('password')"
                                     class="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -111,12 +124,15 @@
                         </div>
 
 
+
+
                         <div class="flex flex-col gap-2">
                             <label class="text-sm font-medium text-gray-700">Confirm Password</label>
                             <div class="relative">
                                 <input name="confirm_password" id="confirm_password" type="password" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                                     placeholder="Confirm your password" />
+                                <button type="button" onclick="togglePasswordVisibility('confirm_password')"
                                 <button type="button" onclick="togglePasswordVisibility('confirm_password')"
                                     class="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -126,6 +142,8 @@
                                 </button>
                             </div>
                         </div>
+
+
 
 
                         <div class="flex flex-col gap-2">
@@ -157,10 +175,13 @@
                         </div>
 
 
+
+
                         <button type="submit"
                             class="w-full py-3 px-4 bg-[#ff6c54] hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200">
                             Create Account
                         </button>
+
 
                         <div class="text-center text-sm text-gray-500">
                             Already have an account? <a href="{{ route('login') }}" class="text-[#ff6c54] hover:text-blue-700 font-medium">Sign in</a>
@@ -168,6 +189,8 @@
                     </div>
                 </form>
             </div>
+
+
 
 
             <div class="hidden md:block h-full overflow-hidden rounded-xl shadow-lg">
@@ -188,6 +211,7 @@
         function togglePasswordVisibility(fieldId) {
             const passwordInput = document.getElementById(fieldId);
             const eyeIcon = document.querySelector(`button[onclick="togglePasswordVisibility('${fieldId}')"] svg`);
+
 
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
@@ -219,3 +243,4 @@
     </script>
 </body>
 </html>
+
