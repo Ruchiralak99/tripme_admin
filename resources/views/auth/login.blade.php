@@ -46,7 +46,7 @@
                     </div>
 
                     <!-- Error Messages -->
-                    @if ($errors->any())
+                    {{-- @if ($errors->any())
                         <div class="mt-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
                             <ul class="list-disc list-inside space-y-1">
                                 @foreach ($errors->all() as $error)
@@ -54,14 +54,14 @@
                                 @endforeach
                             </ul>
                         </div>
-                    @endif
+                    @endif --}}
 
                     <!-- Success Messages -->
-                    @if (session('success'))
+                    {{-- @if (session('success'))
                         <div class="mt-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
                             <p class="text-sm">{{ session('success') }}</p>
                         </div>
-                    @endif
+                    @endif --}}
 
                     <div class="flex flex-col gap-6 mt-8">
 
@@ -105,10 +105,18 @@
                             <a href="#" class="text-sm text-gray-700 hover:text-[#ff6c54]">Forgot password?</a>
                         </div>
 
-                        <button type="submit"
-                            class="w-full py-3 px-4 bg-[#ff6c54] hover:bg-black text-white font-medium rounded-lg transition duration-200">
-                            Sign in
-                        </button>
+                    <button id="login-btn" type="submit"
+    class="w-full flex items-center justify-center gap-2 py-3 px-4 bg-[#ff6c54] hover:bg-black text-white font-medium rounded-lg transition duration-200 disabled:opacity-70 disabled:cursor-not-allowed">
+    <svg id="login-loader" class="hidden w-5 h-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+        viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor"
+            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+    </svg>
+    <span id="login-text">Sign in</span>
+</button>
+
+
 
                         <div class="text-center text-sm text-gray-500">
                             Don't have an account? <a href="{{ route('register') }}"
@@ -119,6 +127,37 @@
             </div>
         </div>
     </div>
+
+    
+    @if (session('success'))
+        <div id="toast-success" class="fixed top-5 right-5 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow-lg border border-[#ff6c54]"
+            role="alert">
+            <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414L8.414 15 5 11.586a1 1 0 111.414-1.414L8.414 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clip-rule="evenodd"></path>
+                </svg>
+            </div>
+            <div class="ml-3 text-sm font-normal">{{ session('success') }}</div>
+            <button type="button" class="ml-auto text-gray-400 hover:text-gray-900" data-dismiss-target="#toast-success" aria-label="Close">✖</button>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div id="toast-danger" class="fixed top-5 right-5 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow-lg border border-[#ff6c54]"
+            role="alert">
+            <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11V5a1 1 0 10-2 0v2a1 1 0 002 0zm0 8a1 1 0 10-2 0v-4a1 1 0 102 0v4z"
+                        clip-rule="evenodd"></path>
+                </svg>
+            </div>
+            <div class="ml-3 text-sm font-normal">{{ session('error') }}</div>
+            <button type="button" class="ml-auto text-gray-400 hover:text-gray-900" data-dismiss-target="#toast-danger" aria-label="Close">✖</button>
+        </div>
+    @endif
 
     <script>
         function togglePasswordVisibility() {
@@ -138,7 +177,34 @@
                 `;
             }
         }
+
+       
+        setTimeout(() => {
+            document.querySelectorAll('[id^="toast-"]').forEach(el => el.remove());
+        }, 4000);
     </script>
+
+    <script>
+    const loginBtn = document.getElementById('login-btn');
+    const loginLoader = document.getElementById('login-loader');
+    const loginText = document.getElementById('login-text');
+    const loginForm = document.querySelector('form');
+
+    loginForm.addEventListener('submit', function (e) {
+        e.preventDefault(); 
+
+        loginBtn.disabled = true;
+        loginLoader.classList.remove('hidden');
+        loginText.textContent = "Signing in...";
+
+        setTimeout(() => {
+            loginForm.submit(); 
+        },500);
+    });
+</script>
+
+
+    
 </body>
 
 </html>
