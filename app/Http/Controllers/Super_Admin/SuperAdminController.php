@@ -51,20 +51,20 @@ class SuperAdminController extends Controller
 
         $users = $query->orderBy('created_at', 'desc')->paginate(10);
 
-        return view('super_admin.user_management', compact('users'));
+        return view('super_admin.user_management.user_management', compact('users'));
     }
 
     // Show user details
     public function userShow($id)
     {
         $user = User::findOrFail($id);
-        return view('super_admin.user_show', compact('user'));
+        return view('super_admin.user_management.user_show', compact('user'));
     }
 
     public function editUser($id)
     {
         $user = User::findOrFail($id);
-        return view('super_admin.user_edit', compact('user'));
+        return view('super_admin.user_management.user_edit', compact('user'));
     }
 
     public function updateUser(Request $request, $id)
@@ -106,13 +106,13 @@ class SuperAdminController extends Controller
 
         $user->update($userData);
 
-        return redirect()->route('super_admin.user_management')
+        return redirect()->route('super_admin.user_management.user_management')
             ->with('success', 'User updated successfully!');
     }
 
     public function createUser()
     {
-        return view('super_admin.user_create');
+        return view('super_admin.user_management.user_create');
     }
 
     public function storeUser(Request $request)
@@ -147,7 +147,7 @@ class SuperAdminController extends Controller
             'is_active' => $request->is_active,
         ]);
 
-        return redirect()->route('super_admin.user_management')
+        return redirect()->route('super_admin.user_management.user_management')
             ->with('success', 'User created successfully!');
     }
 
@@ -163,7 +163,7 @@ class SuperAdminController extends Controller
 
         $user->delete();
 
-        return redirect()->route('super_admin.user_management')
+        return redirect()->route('super_admin.user_management.user_management')
             ->with('success', 'User deleted successfully!');
     }
 
@@ -186,7 +186,7 @@ class SuperAdminController extends Controller
 
     public function showPackages()
     {
-        return view('super_admin.packages');
+        return view('super_admin.packages.packages');
     }
 
     // Air Taxi Package Management
@@ -382,5 +382,11 @@ class SuperAdminController extends Controller
 
         return view('super_admin.packages.tours', compact('tourPackages'));
     }
+
+    public function showAirCrafts()
+    {
+        return view('super_admin.aircrafts.aircrafts');
+    }
+
 
 }

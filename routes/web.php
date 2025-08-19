@@ -49,6 +49,9 @@ Route::middleware('auth')->group(function () {
 
         // Tours Routes
         Route::get('/packages/tours', [SuperAdminController::class, 'tours'])->name('packages.tours');
+
+        //Air Craft Rides
+        Route::get('/aircrafts/aircrafts', [SuperAdminController::class, 'showAirCrafts'])->name('aircrafts.aircrafts');
     });
 
 
