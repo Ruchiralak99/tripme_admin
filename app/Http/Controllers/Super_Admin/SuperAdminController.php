@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Super_Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Ride;
+use App\Models\Aircraft;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -385,7 +386,112 @@ class SuperAdminController extends Controller
 
     public function showAirCrafts()
     {
-        return view('super_admin.aircrafts.aircrafts');
+        $aircrafts = Aircraft::latest()->get();
+        return view('super_admin.aircrafts.aircrafts', compact('aircrafts'));
+    }
+
+    // Create aircraft form
+    public function createAircraft()
+    {
+        return view('super_admin.aircrafts.aircrafts_create');
+    }
+
+    // Store aircraft
+    public function storeAircraft(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'overview' => 'required|string',
+            'passenger_seats' => 'required|integer|min:1',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'status' => 'required|in:active,inactive'
+        ]);
+
+        // Handle multiple image uploads
+        $imagePaths = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imagePaths[] = $image->store('aircrafts', 'public');
+            }
+        }
+
+        Aircraft::create([
+            'name' => $validated['name'],
+            'overview' => $validated['overview'],
+            'passenger_seats' => $validated['passenger_seats'],
+            'images' => $imagePaths,
+            'status' => $validated['status']
+        ]);
+
+        return redirect()->route('super_admin.aircrafts')
+                         ->with('success', 'Aircraft created successfully!');
+    }
+
+    // Edit aircraft
+    public function editAircraft($id)
+    {
+        $aircraft = Aircraft::findOrFail($id);
+        return view('super_admin.aircrafts.aircrafts_edit', compact('aircraft'));
+    }
+
+    // Update aircraft
+    public function updateAircraft(Request $request, $id)
+    {
+        $aircraft = Aircraft::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'overview' => 'required|string',
+            'passenger_seats' => 'required|integer|min:1',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'status' => 'required|in:active,inactive'
+        ]);
+
+        // Handle multiple image uploads
+        $imagePaths = $aircraft->images ?? []; // Keep existing images
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imagePaths[] = $image->store('aircrafts', 'public');
+            }
+        }
+
+        $aircraft->update([
+            'name' => $validated['name'],
+            'overview' => $validated['overview'],
+            'passenger_seats' => $validated['passenger_seats'],
+            'images' => $imagePaths,
+            'status' => $validated['status']
+        ]);
+
+        return redirect()->route('super_admin.aircrafts')
+                         ->with('success', 'Aircraft updated successfully!');
+    }
+
+    // View aircraft details
+    public function viewAircraft($id)
+    {
+        $aircraft = Aircraft::findOrFail($id);
+        return view('super_admin.aircrafts.aircrafts_view', compact('aircraft'));
+    }
+
+    // Delete aircraft
+    public function deleteAircraft($id)
+    {
+        $aircraft = Aircraft::findOrFail($id);
+
+        // Delete images if they exist
+        if ($aircraft->images) {
+            foreach ($aircraft->images as $imagePath) {
+                if (Storage::disk('public')->exists($imagePath)) {
+                    Storage::disk('public')->delete($imagePath);
+                }
+            }
+        }
+
+        $aircraft->delete();
+
+        return redirect()->route('super_admin.aircrafts')
+                         ->with('success', 'Aircraft deleted successfully!');
     }
 
 

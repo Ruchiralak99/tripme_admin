@@ -50,8 +50,14 @@ Route::middleware('auth')->group(function () {
         // Tours Routes
         Route::get('/packages/tours', [SuperAdminController::class, 'tours'])->name('packages.tours');
 
-        //Air Craft Rides
-        Route::get('/aircrafts/aircrafts', [SuperAdminController::class, 'showAirCrafts'])->name('aircrafts.aircrafts');
+        //Air Craft Routes
+        Route::get('/aircrafts', [SuperAdminController::class, 'showAirCrafts'])->name('aircrafts');
+        Route::get('/aircrafts/create', [SuperAdminController::class, 'createAircraft'])->name('aircrafts.create');
+        Route::post('/aircrafts/store', [SuperAdminController::class, 'storeAircraft'])->name('aircrafts.store');
+        Route::get('/aircrafts/{id}/edit', [SuperAdminController::class, 'editAircraft'])->name('aircrafts.edit');
+        Route::put('/aircrafts/{id}', [SuperAdminController::class, 'updateAircraft'])->name('aircrafts.update');
+        Route::get('/aircrafts/{id}/view', [SuperAdminController::class, 'viewAircraft'])->name('aircrafts.view');
+        Route::delete('/aircrafts/{id}', [SuperAdminController::class, 'deleteAircraft'])->name('aircrafts.delete');
     });
 
 
