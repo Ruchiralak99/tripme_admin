@@ -91,7 +91,7 @@
               <span class="font-medium">User Management</span>
             </a>
 
-            <a href="#" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200">
+            <a href="{{ route('super_admin.packages') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200">
               <div class="flex items-center justify-center h-8 w-8 rounded-lg bg-slate-700/50 group-hover:bg-slate-600 transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M9 5v.01M15 5v.01"></path>
@@ -100,13 +100,13 @@
               <span class="font-medium">Package Management</span>
             </a>
 
-            <a href="#" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200">
+            <a href="{{ route('super_admin.aircrafts') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200">
               <div class="flex items-center justify-center h-8 w-8 rounded-lg bg-slate-700/50 group-hover:bg-slate-600 transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                 </svg>
               </div>
-              <span class="font-medium">Analytics</span>
+              <span class="font-medium">Air Craft Management</span>
             </a>
 
             <div class="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mt-8">Account</div>
