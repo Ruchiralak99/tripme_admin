@@ -220,13 +220,13 @@ class SuperAdminController extends Controller
     public function rides()
     {
         $ridesCategories = Ride::orderBy('created_at', 'desc')->get();
-        return view('super_admin.packages.rides', compact('ridesCategories'));
+        return view('super_admin.packages.rides.rides', compact('ridesCategories'));
     }
 
     // Create new ride category
     public function createRideCategory()
     {
-        return view('super_admin.packages.rides_create');
+        return view('super_admin.packages.rides.rides_create');
     }
 
     // Store ride category
@@ -275,7 +275,7 @@ class SuperAdminController extends Controller
             'status' => $validated['status']
         ]);
 
-        return redirect()->route('super_admin.packages.rides')
+        return redirect()->route('super_admin.packages.rides.rides')
                          ->with('success', 'Ride category created successfully!');
     }
 
@@ -283,7 +283,7 @@ class SuperAdminController extends Controller
     public function editRideCategory($id)
     {
         $ride = Ride::findOrFail($id);
-        return view('super_admin.packages.rides_edit', compact('ride'));
+        return view('super_admin.packages.rides.rides_edit', compact('ride'));
     }
 
     // Update ride category
@@ -338,7 +338,7 @@ class SuperAdminController extends Controller
             'status' => $validated['status']
         ]);
 
-        return redirect()->route('super_admin.packages.rides')
+        return redirect()->route('super_admin.packages.rides.rides')
                          ->with('success', 'Ride category updated successfully!');
     }
 
@@ -354,7 +354,7 @@ class SuperAdminController extends Controller
 
         $ride->delete();
 
-        return redirect()->route('super_admin.packages.rides')
+        return redirect()->route('super_admin.packages.rides.rides')
                          ->with('success', 'Ride category deleted successfully!');
     }
 
