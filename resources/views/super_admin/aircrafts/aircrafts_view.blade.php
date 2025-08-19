@@ -172,7 +172,7 @@
 </div>
 
 {{-- Image Modal --}}
-<div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+<div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50" style="display: none;">
   <div class="relative max-w-4xl max-h-full p-4">
     <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white hover:text-gray-300 z-10">
       <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -188,12 +188,12 @@
 function openImageModal(src, title) {
   document.getElementById('modalImage').src = src;
   document.getElementById('modalTitle').textContent = title;
-  document.getElementById('imageModal').classList.remove('hidden');
+  document.getElementById('imageModal').style.display = 'flex';
   document.body.style.overflow = 'hidden';
 }
 
 function closeImageModal() {
-  document.getElementById('imageModal').classList.add('hidden');
+  document.getElementById('imageModal').style.display = 'none';
   document.body.style.overflow = 'auto';
 }
 
@@ -206,7 +206,7 @@ document.getElementById('imageModal').addEventListener('click', function(e) {
 
 // Close modal with Escape key
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape' && !document.getElementById('imageModal').classList.contains('hidden')) {
+  if (e.key === 'Escape' && document.getElementById('imageModal').style.display === 'flex') {
     closeImageModal();
   }
 });
