@@ -32,6 +32,23 @@ Route::middleware('auth')->group(function () {
         Route::put('/user-management/{id}', [SuperAdminController::class, 'updateUser'])->name('user_update');
         Route::delete('/user-management/{id}', [SuperAdminController::class, 'deleteUser'])->name('user_delete');
         Route::patch('/user-management/{id}/toggle-status', [SuperAdminController::class, 'toggleUserStatus'])->name('user_toggle_status');
+
+        // Package Management Routes
+        Route::get('/packages', [SuperAdminController::class, 'showPackages'])->name('packages');
+
+        // Air Taxi Routes
+        Route::get('/packages/air-taxi', [SuperAdminController::class, 'airTaxi'])->name('packages.air_taxi');
+
+        // Rides Routes (with full CRUD)
+        Route::get('/packages/rides', [SuperAdminController::class, 'rides'])->name('packages.rides');
+        Route::get('/packages/rides/create', [SuperAdminController::class, 'createRideCategory'])->name('packages.rides_create');
+        Route::post('/packages/rides/store', [SuperAdminController::class, 'storeRideCategory'])->name('packages.rides_store');
+        Route::get('/packages/rides/{id}/edit', [SuperAdminController::class, 'editRideCategory'])->name('packages.rides_edit');
+        Route::put('/packages/rides/{id}', [SuperAdminController::class, 'updateRideCategory'])->name('packages.rides_update');
+        Route::delete('/packages/rides/{id}', [SuperAdminController::class, 'deleteRideCategory'])->name('packages.rides_delete');
+
+        // Tours Routes
+        Route::get('/packages/tours', [SuperAdminController::class, 'tours'])->name('packages.tours');
     });
 
 

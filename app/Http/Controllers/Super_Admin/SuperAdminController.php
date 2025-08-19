@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Super_Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Ride;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
 
 class SuperAdminController extends Controller
@@ -181,4 +183,204 @@ class SuperAdminController extends Controller
         return redirect()->back()
             ->with('success', "User {$status} successfully!");
     }
+
+    public function showPackages()
+    {
+        return view('super_admin.packages');
+    }
+
+    // Air Taxi Package Management
+    public function airTaxi()
+    {
+        // Dummy data for Air Taxi
+        $airTaxiServices = [
+            [
+                'id' => 1,
+                'name' => 'Airport Transfer - Premium',
+                'description' => 'Luxury helicopter transfer from airport to city center',
+                'price' => 500,
+                'duration' => '15 minutes',
+                'image' => 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=300&h=200&fit=crop'
+            ],
+            [
+                'id' => 2,
+                'name' => 'Private Jet Charter',
+                'description' => 'Exclusive private jet services for long-distance travel',
+                'price' => 2500,
+                'duration' => '2-4 hours',
+                'image' => 'https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=300&h=200&fit=crop'
+            ]
+        ];
+
+        return view('super_admin.packages.air_taxi', compact('airTaxiServices'));
+    }
+
+    // Rides Package Management
+    public function rides()
+    {
+        $ridesCategories = Ride::orderBy('created_at', 'desc')->get();
+        return view('super_admin.packages.rides', compact('ridesCategories'));
+    }
+
+    // Create new ride category
+    public function createRideCategory()
+    {
+        return view('super_admin.packages.rides_create');
+    }
+
+    // Store ride category
+    public function storeRideCategory(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price_lkr' => 'required|numeric|min:0',
+            'tax_percentage' => 'required|numeric|min:0|max:100',
+            'discount_percentage' => 'nullable|numeric|min:0|max:100',
+            'duration' => 'nullable|string|max:100',
+            'passenger_capacity' => 'nullable|integer|min:1',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'status' => 'required|in:active,inactive'
+        ]);
+
+        // Calculate regular value
+        $price = $validated['price_lkr'];
+        $taxAmount = ($price * $validated['tax_percentage']) / 100;
+        $regularValue = $price + $taxAmount;
+
+        // Apply discount if provided
+        if (!empty($validated['discount_percentage'])) {
+            $discountAmount = ($regularValue * $validated['discount_percentage']) / 100;
+            $regularValue = $regularValue - $discountAmount;
+        }
+
+        // Handle image upload
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('rides', 'public');
+        }
+
+        // Create the ride
+        Ride::create([
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            'price_lkr' => $validated['price_lkr'],
+            'tax_percentage' => $validated['tax_percentage'],
+            'discount_percentage' => $validated['discount_percentage'],
+            'regular_value' => $regularValue,
+            'duration' => $validated['duration'],
+            'passenger_capacity' => $validated['passenger_capacity'],
+            'image_path' => $imagePath,
+            'status' => $validated['status']
+        ]);
+
+        return redirect()->route('super_admin.packages.rides')
+                         ->with('success', 'Ride category created successfully!');
+    }
+
+    // Edit ride category
+    public function editRideCategory($id)
+    {
+        $ride = Ride::findOrFail($id);
+        return view('super_admin.packages.rides_edit', compact('ride'));
+    }
+
+    // Update ride category
+    public function updateRideCategory(Request $request, $id)
+    {
+        $ride = Ride::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price_lkr' => 'required|numeric|min:0',
+            'tax_percentage' => 'required|numeric|min:0|max:100',
+            'discount_percentage' => 'nullable|numeric|min:0|max:100',
+            'duration' => 'nullable|string|max:100',
+            'passenger_capacity' => 'nullable|integer|min:1',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'status' => 'required|in:active,inactive'
+        ]);
+
+        // Calculate regular value
+        $price = $validated['price_lkr'];
+        $taxAmount = ($price * $validated['tax_percentage']) / 100;
+        $regularValue = $price + $taxAmount;
+
+        // Apply discount if provided
+        if (!empty($validated['discount_percentage'])) {
+            $discountAmount = ($regularValue * $validated['discount_percentage']) / 100;
+            $regularValue = $regularValue - $discountAmount;
+        }
+
+        // Handle image upload
+        $imagePath = $ride->image_path; // Keep existing image path
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($ride->image_path && Storage::disk('public')->exists($ride->image_path)) {
+                Storage::disk('public')->delete($ride->image_path);
+            }
+            $imagePath = $request->file('image')->store('rides', 'public');
+        }
+
+        // Update the ride
+        $ride->update([
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            'price_lkr' => $validated['price_lkr'],
+            'tax_percentage' => $validated['tax_percentage'],
+            'discount_percentage' => $validated['discount_percentage'],
+            'regular_value' => $regularValue,
+            'duration' => $validated['duration'],
+            'passenger_capacity' => $validated['passenger_capacity'],
+            'image_path' => $imagePath,
+            'status' => $validated['status']
+        ]);
+
+        return redirect()->route('super_admin.packages.rides')
+                         ->with('success', 'Ride category updated successfully!');
+    }
+
+    // Delete ride category
+    public function deleteRideCategory($id)
+    {
+        $ride = Ride::findOrFail($id);
+
+        // Delete image if exists
+        if ($ride->image_path && Storage::disk('public')->exists($ride->image_path)) {
+            Storage::disk('public')->delete($ride->image_path);
+        }
+
+        $ride->delete();
+
+        return redirect()->route('super_admin.packages.rides')
+                         ->with('success', 'Ride category deleted successfully!');
+    }
+
+    // Tours Package Management
+    public function tours()
+    {
+        // Dummy data for Tours
+        $tourPackages = [
+            [
+                'id' => 1,
+                'name' => 'Cultural Heritage Tour',
+                'description' => 'Explore ancient temples and cultural sites',
+                'price' => 75,
+                'duration' => 'Full Day',
+                'image' => 'https://images.unsplash.com/photo-1539650116574-75c0c6d8d5d9?w=300&h=200&fit=crop'
+            ],
+            [
+                'id' => 2,
+                'name' => 'Nature & Wildlife Safari',
+                'description' => 'Adventure through national parks and wildlife reserves',
+                'price' => 120,
+                'duration' => '2 Days',
+                'image' => 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=300&h=200&fit=crop'
+            ]
+        ];
+
+        return view('super_admin.packages.tours', compact('tourPackages'));
+    }
+
 }

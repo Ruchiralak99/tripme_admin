@@ -70,15 +70,16 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-2">User Role</label>
-          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-            @if($user->role == 'super_admin') bg-purple-100 text-purple-800
-            @elseif($user->role == 'admin') bg-blue-100 text-blue-800
-            @elseif($user->role == 'vendor') bg-green-100 text-green-800
-            @elseif($user->role == 'affiliate') bg-orange-100 text-orange-800
-            @else bg-slate-100 text-slate-800
-            @endif">
+          <span @class([
+            'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium',
+            'bg-purple-100 text-purple-800' => $user->role === 'super_admin',
+            'bg-blue-100 text-blue-800' => $user->role === 'admin',
+            'bg-green-100 text-green-800' => $user->role === 'vendor',
+            'bg-orange-100 text-orange-800' => $user->role === 'affiliate',
+            'bg-slate-100 text-slate-800' => !in_array($user->role, ['super_admin','admin','vendor','affiliate']),
+        ])>
             {{ ucfirst(str_replace('_', ' ', $user->role)) }}
-          </span>
+        </span>
         </div>
 
         <div>
