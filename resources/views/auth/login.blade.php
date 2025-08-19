@@ -17,9 +17,10 @@
 <body class="bg-gray-50 md:bg-none bg-[url('https://images.unsplash.com/photo-1506929562872-bb421503ef21?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1368&q=80')] bg-cover bg-center">
     <div class="min-h-screen flex flex-col items-center justify-center bg-white/80 md:bg-transparent">
         <div class="grid md:grid-cols-2 items-center gap-8 max-w-7xl w-full p-4 m-4 rounded-md">
-          
-            <div class="md:max-w-xl w-full px-8 py-8 bg-white rounded-xl shadow-lg">
-                <form action="#" method="POST">
+
+            <div class="md:max-w-xl w-full px-4 py-8 bg-white rounded-xl shadow-lg">
+                <form action="{{ route('login.post') }}" method="POST">
+                    @csrf
                     <div class="flex flex-col gap-6 items-center">
 
                         <div class="flex items-center gap-2">
@@ -54,8 +55,8 @@
 
                         <div class="flex flex-col gap-2">
                             <label class="text-sm font-medium text-gray-700">Email address</label>
-                            <input name="email" type="email" required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff6c54] focus:border-[#ff6c54] outline-none transition"
+                            <input name="email" type="email" required value="{{ old('email') }}"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                                 placeholder="your@email.com" />
                         </div>
 
@@ -66,7 +67,7 @@
                             </div>
                             <div class="relative">
                                 <input name="password" id="password" type="password" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff6c54] focus:border-[#ff6c54] outline-none transition"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                                     placeholder="Enter your password" />
                                 <button type="button" onclick="togglePasswordVisibility()"
                                     class="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600">
@@ -85,16 +86,16 @@
                                     class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                                 <label for="remember-me" class="ml-2 block text-sm text-gray-700">Remember me</label>
                             </div>
-                            <a href="#" class="text-sm text-gray-700 hover:text-[#ff6c54]">Forgot password?</a>
+                            <a href="#" class="text-sm text-gray-700 hover:text-gray-700">Forgot password?</a>
                         </div>
 
                         <button type="submit"
-                            class="w-full py-3 px-4 bg-[#ff6c54] hover:bg-black text-white font-medium rounded-lg transition duration-200">
+                            class="w-full py-3 px-4 bg-[#ff6c54] hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200">
                             Sign in
                         </button>
 
                         <div class="text-center text-sm text-gray-500">
-                            Don't have an account? <a href="/register" class="text-[#ff6c54] hover:text-black font-medium">Sign up</a>
+                            Don't have an account? <a href="{{ route('register') }}" class="text-[#ff6c54] hover:text-blue-700 font-medium">Sign up</a>
                         </div>
                     </div>
                 </form>
