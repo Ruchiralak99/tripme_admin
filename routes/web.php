@@ -38,6 +38,8 @@ Route::middleware('auth')->group(function () {
 
         // Air Taxi Routes
         Route::get('/packages/air-taxi', [SuperAdminController::class, 'airTaxi'])->name('packages.air_taxi');
+        Route::post('/packages/air-taxi/book', [SuperAdminController::class, 'storeAirTaxiBooking'])->name('packages.air_taxi.book');
+        Route::get('/packages/air-taxi/aircraft/{id}', [SuperAdminController::class, 'getAircraftDetails'])->name('packages.air_taxi.aircraft_details');
 
         // Rides Routes (with full CRUD)
         Route::get('/packages/rides', [SuperAdminController::class, 'rides'])->name('packages.rides');
