@@ -41,7 +41,7 @@
                         <h2 class="text-2xl font-bold text-gray-800">
                             Welcome back to <span class="text-[#ff6c54]">TripMe</span>
                         </h2>
-                        <p class="text-gray-500 text-center">Sign in to access your travel dashboard and manage your
+                        <p class="text-gray-500 text-center text-sm">Sign in to access your travel dashboard and manage your
                             bookings.</p>
                     </div>
 
