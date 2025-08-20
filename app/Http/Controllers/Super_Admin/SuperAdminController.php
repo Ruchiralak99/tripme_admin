@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Ride;
 use App\Models\Aircraft;
+use App\Models\AirTaxiBooking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -193,40 +194,97 @@ class SuperAdminController extends Controller
     // Air Taxi Package Management
     public function airTaxi()
     {
-        // Dummy data for Air Taxi
+        // Get all aircrafts for booking form
+        $aircrafts = Aircraft::where('status', 'active')->get();
+
+        // Dummy data for Air Taxi with real images
         $airTaxiServices = [
             [
                 'id' => 1,
-                'name' => 'Airport Transfer - Premium',
-                'description' => 'Luxury helicopter transfer from airport to city center',
-                'price' => 500,
-                'duration' => '15 minutes',
-                'image' => 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=300&h=200&fit=crop'
+                'name' => 'Helicopter City Tour',
+                'description' => 'Experience breathtaking aerial views of the city with our premium helicopter tours. Perfect for sightseeing and photography.',
+                'price' => 450,
+                'duration' => '30 minutes',
+                'image' => 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=250&fit=crop'
             ],
             [
                 'id' => 2,
-                'name' => 'Private Jet Charter',
-                'description' => 'Exclusive private jet services for long-distance travel',
+                'name' => 'Airport VIP Transfer',
+                'description' => 'Skip the traffic with our luxury helicopter transfer service. Fast, comfortable, and exclusive transportation.',
+                'price' => 850,
+                'duration' => '15 minutes',
+                'image' => 'https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=400&h=250&fit=crop'
+            ],
+            [
+                'id' => 3,
+                'name' => 'Scenic Mountain Flight',
+                'description' => 'Discover stunning mountain landscapes and remote destinations only accessible by helicopter.',
+                'price' => 1200,
+                'duration' => '45 minutes',
+                'image' => 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=250&fit=crop'
+            ],
+            [
+                'id' => 4,
+                'name' => 'Private Charter Service',
+                'description' => 'Exclusive helicopter charter for business trips, special events, or luxury travel experiences.',
                 'price' => 2500,
                 'duration' => '2-4 hours',
-                'image' => 'https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=300&h=200&fit=crop'
+                'image' => 'https://images.unsplash.com/photo-1568515023450-21dffc50d045?w=400&h=250&fit=crop'
             ]
         ];
 
-        return view('super_admin.packages.air_taxi', compact('airTaxiServices'));
+        return view('super_admin.packages.air_taxi.air_taxi', compact('airTaxiServices', 'aircrafts'));
+    }
+
+    public function storeAirTaxiBooking(Request $request)
+    {
+        $request->validate([
+            'full_name' => 'required|string|max:255',
+            'phone_number' => 'required|string|max:20',
+            'aircraft_id' => 'required|exists:aircrafts,id',
+            'tour_type' => 'required|string|max:255',
+            'booking_date' => 'required|date|after:' . now()->addDays(3)->format('Y-m-d'),
+            'booking_time' => 'required',
+            'passengers' => 'required|array|min:1',
+            'passengers.*.name' => 'required|string|max:255',
+            'passengers.*.nic' => 'required|string|max:20',
+        ]);
+
+        $booking = AirTaxiBooking::create([
+            'user_id' => Auth::id(),
+            'aircraft_id' => $request->aircraft_id,
+            'full_name' => $request->full_name,
+            'phone_number' => $request->phone_number,
+            'tour_type' => $request->tour_type,
+            'booking_date' => $request->booking_date,
+            'booking_time' => $request->booking_time,
+            'passengers' => $request->passengers,
+            'status' => 'pending'
+        ]);
+
+        return redirect()->back()->with('success', 'Air taxi booking has been created successfully!');
+    }
+
+    public function getAircraftDetails($id)
+    {
+        $aircraft = Aircraft::findOrFail($id);
+        return response()->json([
+            'name' => $aircraft->name,
+            'passenger_seats' => $aircraft->passenger_seats
+        ]);
     }
 
     // Rides Package Management
     public function rides()
     {
         $ridesCategories = Ride::orderBy('created_at', 'desc')->get();
-        return view('super_admin.packages.rides', compact('ridesCategories'));
+        return view('super_admin.packages.rides.rides', compact('ridesCategories'));
     }
 
     // Create new ride category
     public function createRideCategory()
     {
-        return view('super_admin.packages.rides_create');
+        return view('super_admin.packages.rides.rides_create');
     }
 
     // Store ride category
@@ -275,7 +333,7 @@ class SuperAdminController extends Controller
             'status' => $validated['status']
         ]);
 
-        return redirect()->route('super_admin.packages.rides')
+        return redirect()->route('super_admin.packages.rides.rides')
                          ->with('success', 'Ride category created successfully!');
     }
 
@@ -283,7 +341,7 @@ class SuperAdminController extends Controller
     public function editRideCategory($id)
     {
         $ride = Ride::findOrFail($id);
-        return view('super_admin.packages.rides_edit', compact('ride'));
+        return view('super_admin.packages.rides.rides_edit', compact('ride'));
     }
 
     // Update ride category
@@ -338,7 +396,7 @@ class SuperAdminController extends Controller
             'status' => $validated['status']
         ]);
 
-        return redirect()->route('super_admin.packages.rides')
+        return redirect()->route('super_admin.packages.rides.rides')
                          ->with('success', 'Ride category updated successfully!');
     }
 
@@ -354,7 +412,7 @@ class SuperAdminController extends Controller
 
         $ride->delete();
 
-        return redirect()->route('super_admin.packages.rides')
+        return redirect()->route('super_admin.packages.rides.rides')
                          ->with('success', 'Ride category deleted successfully!');
     }
 
@@ -381,7 +439,7 @@ class SuperAdminController extends Controller
             ]
         ];
 
-        return view('super_admin.packages.tours', compact('tourPackages'));
+        return view('super_admin.packages.tours.tours', compact('tourPackages'));
     }
 
     public function showAirCrafts()
