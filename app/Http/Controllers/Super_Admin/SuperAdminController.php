@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Super_Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Ride;
+use App\Models\RideCity;
 use App\Models\Aircraft;
 use App\Models\AirTaxiBooking;
 use Illuminate\Http\Request;
@@ -414,6 +415,43 @@ class SuperAdminController extends Controller
 
         return redirect()->route('super_admin.packages.rides.rides')
                          ->with('success', 'Ride category deleted successfully!');
+    }
+
+    // Ride Cities Management
+    public function rideCities()
+    {
+        $cities = RideCity::orderBy('created_at', 'desc')->get();
+        return view('super_admin.packages.rides.cities', compact('cities'));
+    }
+
+    public function rideCitiesStore(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255|unique:ride_cities,name',
+            'description' => 'nullable|string|max:1000',
+            'status' => 'required|in:active,inactive'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        RideCity::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'status' => $request->status ?? 'active'
+        ]);
+
+        return redirect()->route('super_admin.packages.rides.cities')
+                         ->with('success', 'City added successfully!');
+    }
+
+    public function rideCitiesDelete(RideCity $city)
+    {
+        $city->delete();
+
+        return redirect()->route('super_admin.packages.rides.cities')
+                         ->with('success', 'City deleted successfully!');
     }
 
     // Tours Package Management

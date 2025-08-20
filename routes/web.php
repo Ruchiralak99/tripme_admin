@@ -42,12 +42,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/packages/air-taxi/aircraft/{id}', [SuperAdminController::class, 'getAircraftDetails'])->name('packages.air_taxi.aircraft_details');
 
         // Rides Routes (with full CRUD)
-        Route::get('/packages/rides', [SuperAdminController::class, 'rides'])->name('packages.rides');
+        Route::get('/packages/rides', [SuperAdminController::class, 'rides'])->name('packages.rides.rides');
         Route::get('/packages/rides/create', [SuperAdminController::class, 'createRideCategory'])->name('packages.rides_create');
         Route::post('/packages/rides/store', [SuperAdminController::class, 'storeRideCategory'])->name('packages.rides_store');
         Route::get('/packages/rides/{id}/edit', [SuperAdminController::class, 'editRideCategory'])->name('packages.rides_edit');
         Route::put('/packages/rides/{id}', [SuperAdminController::class, 'updateRideCategory'])->name('packages.rides_update');
         Route::delete('/packages/rides/{id}', [SuperAdminController::class, 'deleteRideCategory'])->name('packages.rides_delete');
+
+        // Ride Cities Routes
+        Route::get('/packages/rides/cities', [SuperAdminController::class, 'rideCities'])->name('packages.rides.cities');
+        Route::post('/packages/rides/cities/store', [SuperAdminController::class, 'rideCitiesStore'])->name('packages.rides_cities_store');
+        Route::delete('/packages/rides/cities/{city}', [SuperAdminController::class, 'rideCitiesDelete'])->name('packages.rides_cities_delete');
 
         // Tours Routes
         Route::get('/packages/tours', [SuperAdminController::class, 'tours'])->name('packages.tours');
