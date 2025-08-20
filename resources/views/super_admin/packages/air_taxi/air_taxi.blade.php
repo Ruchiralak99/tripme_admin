@@ -146,6 +146,7 @@
             <div>
               <h3 class="text-lg font-medium leading-6 text-gray-900 sm:text-xl">Book Air Taxi Service</h3>
               <p class="mt-1 text-sm text-gray-500">Fill in the details below to book your helicopter experience.</p>
+              <p class="mt-1 text-sm font-medium text-red-500">You must enter passenger details equal to the available seats — Fewer passengers cannot book a Air Taxi</p>
             </div>
             <button type="button" id="closeBookingBtn" class="ml-4 text-gray-400 hover:text-gray-600 transition-colors" aria-label="Close">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -247,128 +248,6 @@
 </div>
 
 {{-- Close the page container --}}
-</div>
-<div id="bookingModal"
-     class="fixed inset-0 z-[60] hidden"
-     aria-hidden="true"
-     role="dialog"
-     aria-modal="true">
-  {{-- Overlay --}}
-  <div id="bookingOverlay" class="absolute inset-0 bg-black/60 opacity-0 transition-opacity duration-300"></div>
-
-  {{-- Modal Container - Centered with Scrolling --}}
-  <div class="relative z-10 w-full h-full overflow-y-auto">
-    <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-      {{-- Dialog --}}
-      <div id="bookingDialog"
-           class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all w-full max-w-4xl opacity-0 scale-95 duration-300 ease-out">
-
-      {{-- Scrollable Content --}}
-      <div class="flex flex-col max-h-[95vh]">
-        {{-- Header - Fixed --}}
-        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 border-b border-gray-200">
-          <div class="flex items-center justify-between">
-            <div>
-              <h3 class="text-lg font-medium leading-6 text-gray-900 sm:text-xl">Book Air Taxi Service</h3>
-              <p class="mt-1 text-sm text-gray-500">Fill in the details below to book your helicopter experience.</p>
-            </div>
-            <button type="button" id="closeBookingBtn" class="ml-4 text-gray-400 hover:text-gray-600 transition-colors" aria-label="Close">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        {{-- Content - Scrollable (Fixed Height) --}}
-        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 max-h-[60vh] overflow-y-auto">
-          <form action="{{ route('super_admin.packages.air_taxi.book') }}" method="POST" id="bookingForm">
-            @csrf      {{-- Basic Information --}}
-      <div class="mb-6 sm:mb-8">
-        <h4 class="text-base sm:text-lg font-semibold text-slate-900 mb-3 sm:mb-4">Basic Information</h4>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-          <div>
-            <label for="full_name" class="block text-sm font-medium text-slate-700 mb-2">Full Name *</label>
-            <input type="text" id="full_name" name="full_name" required
-                   class="w-full px-3 sm:px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors text-sm sm:text-base"
-                   placeholder="Enter your full name">
-          </div>
-          <div>
-            <label for="phone_number" class="block text-sm font-medium text-slate-700 mb-2">Phone Number *</label>
-            <input type="tel" id="phone_number" name="phone_number" required
-                   class="w-full px-3 sm:px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors text-sm sm:text-base"
-                   placeholder="Enter your phone number">
-          </div>
-        </div>
-      </div>
-
-      {{-- Aircraft Selection --}}
-      <div class="mb-6 sm:mb-8">
-        <h4 class="text-base sm:text-lg font-semibold text-slate-900 mb-3 sm:mb-4">Aircraft Selection</h4>
-        <div>
-          <label for="aircraft_id" class="block text-sm font-medium text-slate-700 mb-2">Select Aircraft *</label>
-          <select id="aircraft_id" name="aircraft_id" required
-                  class="w-full px-3 sm:px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors text-sm sm:text-base">
-            <option value="">Choose an aircraft...</option>
-            @foreach($aircrafts as $aircraft)
-              <option value="{{ $aircraft->id }}" data-seats="{{ (int) $aircraft->passenger_seats }}">
-                {{ $aircraft->name }} ({{ (int) $aircraft->passenger_seats }} seats available)
-              </option>
-            @endforeach
-          </select>
-        </div>
-      </div>
-
-      {{-- Booking Details --}}
-      <div class="mb-6 sm:mb-8">
-        <h4 class="text-base sm:text-lg font-semibold text-slate-900 mb-3 sm:mb-4">Booking Details</h4>
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4">
-          <div class="lg:col-span-1">
-            <label for="tour_type" class="block text-sm font-medium text-slate-700 mb-2">Tour Type (Reason) *</label>
-            <input type="text" id="tour_type" name="tour_type" required
-                   placeholder="Enter the reason for your flight (e.g., City Tour, Airport Transfer, Business Meeting)"
-                   class="w-full px-3 sm:px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors text-sm sm:text-base">
-            <p class="text-xs text-slate-500 mt-1">Describe the purpose of your helicopter trip</p>
-          </div>
-          <div>
-            <label for="booking_date" class="block text-sm font-medium text-slate-700 mb-2">Date *</label>
-            <input type="date" id="booking_date" name="booking_date" required
-                   min="{{ now()->addDays(3)->format('Y-m-d') }}"
-                   class="w-full px-3 sm:px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors text-sm sm:text-base">
-            <p class="text-xs text-slate-500 mt-1">Minimum 3 days advance booking required</p>
-          </div>
-          <div>
-            <label for="booking_time" class="block text-sm font-medium text-slate-700 mb-2">Time *</label>
-            <input type="time" id="booking_time" name="booking_time" required
-                   class="w-full px-3 sm:px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors text-sm sm:text-base">
-          </div>
-        </div>
-      </div>
-
-      {{-- Passenger Information --}}
-      <div id="passengerSection" class="mb-6 sm:mb-8 hidden">
-        <h4 class="text-base sm:text-lg font-semibold text-slate-900 mb-3 sm:mb-4">Passenger Information</h4>
-        <div id="passengerFields" class="space-y-3 sm:space-y-4"></div>
-      </div>
-    </form>
-        </div>
-
-        {{-- Footer - Fixed --}}
-        <div class="flex-shrink-0 bg-white border-t border-slate-200 p-4 sm:p-6 rounded-b-xl sm:rounded-b-2xl">
-          <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 sm:gap-4">
-            <button type="button" id="cancelBookingBtn"
-                    class="px-4 sm:px-6 py-2 text-slate-600 hover:text-slate-800 transition-colors text-sm sm:text-base order-2 sm:order-1">
-              Cancel
-            </button>
-            <button type="submit" form="bookingForm"
-                    class="px-4 sm:px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors duration-200 font-medium text-sm sm:text-base order-1 sm:order-2">
-              Book Air Taxi
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 
 {{-- Enhanced JavaScript for Beautiful Modal --}}
