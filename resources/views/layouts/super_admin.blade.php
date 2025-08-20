@@ -60,13 +60,15 @@
         <div class="h-full flex flex-col">
           {{-- Logo Section --}}
           <div class="hidden lg:flex items-center gap-4 px-6 pt-8 pb-6 border-b border-slate-700/50">
-            <div class="flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 text-white font-extrabold shadow-lg">
+            {{-- <div class="flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 text-white font-extrabold shadow-lg">
               <span class="text-xl">T</span>
             </div>
             <div>
               <div class="text-xl font-bold tracking-tight">TripMe</div>
               <div class="text-sm text-slate-400 font-medium">Admin Dashboard</div>
-            </div>
+            </div> --}}
+
+            <img src="{{ asset('images/logo.png') }}" class="w-auto h-12" alt="logo">
           </div>
 
           {{-- Navigation --}}
