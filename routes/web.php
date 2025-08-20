@@ -42,12 +42,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/packages/air-taxi/aircraft/{id}', [SuperAdminController::class, 'getAircraftDetails'])->name('packages.air_taxi.aircraft_details');
 
         // Rides Routes (with full CRUD)
-        Route::get('/packages/rides', [SuperAdminController::class, 'rides'])->name('packages.rides');
+        Route::get('/packages/rides', [SuperAdminController::class, 'rides'])->name('packages.rides.rides');
         Route::get('/packages/rides/create', [SuperAdminController::class, 'createRideCategory'])->name('packages.rides_create');
         Route::post('/packages/rides/store', [SuperAdminController::class, 'storeRideCategory'])->name('packages.rides_store');
         Route::get('/packages/rides/{id}/edit', [SuperAdminController::class, 'editRideCategory'])->name('packages.rides_edit');
         Route::put('/packages/rides/{id}', [SuperAdminController::class, 'updateRideCategory'])->name('packages.rides_update');
         Route::delete('/packages/rides/{id}', [SuperAdminController::class, 'deleteRideCategory'])->name('packages.rides_delete');
+
+        // Ride Cities Routes
+        Route::get('/packages/rides/cities', [SuperAdminController::class, 'rideCities'])->name('packages.rides.cities');
+        Route::post('/packages/rides/cities/store', [SuperAdminController::class, 'rideCitiesStore'])->name('packages.rides_cities_store');
+        Route::delete('/packages/rides/cities/{city}', [SuperAdminController::class, 'rideCitiesDelete'])->name('packages.rides_cities_delete');
 
         // Tours Routes
         Route::get('/packages/tours', [SuperAdminController::class, 'tours'])->name('packages.tours');
@@ -60,6 +65,31 @@ Route::middleware('auth')->group(function () {
         Route::put('/aircrafts/{id}', [SuperAdminController::class, 'updateAircraft'])->name('aircrafts.update');
         Route::get('/aircrafts/{id}/view', [SuperAdminController::class, 'viewAircraft'])->name('aircrafts.view');
         Route::delete('/aircrafts/{id}', [SuperAdminController::class, 'deleteAircraft'])->name('aircrafts.delete');
+
+
+        // Promo Code Routes
+        Route::get('/promo-codes', [SuperAdminController::class, 'promoCodes'])->name('promo_codes');
+        Route::get('/promo-codes/create', [SuperAdminController::class, 'createPromoCode'])->name('promo_codes.create');
+        Route::post('/promo-codes', [SuperAdminController::class, 'storePromoCode'])->name('promo_codes.store');
+        Route::get('/promo-codes/{id}', [SuperAdminController::class, 'viewPromoCode'])->name('promo_codes.view');
+        Route::get('/promo-codes/{id}/edit', [SuperAdminController::class, 'editPromoCode'])->name('promo_codes.edit');
+        Route::put('/promo-codes/{id}', [SuperAdminController::class, 'updatePromoCode'])->name('promo_codes.update');
+        Route::delete('/promo-codes/{id}', [SuperAdminController::class, 'deletePromoCode'])->name('promo_codes.delete');
+
+        // Booking management
+
+        // Air taxi Booking Routes
+        Route::get('/bookings/air-taxi-bookings', [SuperAdminController::class, 'showAirTaxiBookings'])->name('bookings.air_taxi.bookings');
+        Route::get('/bookings/air-taxi-bookings/{id}/view', [SuperAdminController::class, 'viewAirTaxiBooking'])->name('bookings.air_taxi.view');
+        Route::get('/bookings/air-taxi-bookings/{id}/edit', [SuperAdminController::class, 'editAirTaxiBooking'])->name('bookings.air_taxi.edit');
+        Route::put('/bookings/air-taxi-bookings/{id}', [SuperAdminController::class, 'updateAirTaxiBooking'])->name('bookings.air_taxi.update');
+        Route::patch('/bookings/air-taxi-bookings/{id}/status', [SuperAdminController::class, 'updateAirTaxiBookingStatus'])->name('bookings.air_taxi.status');
+        Route::delete('/bookings/air-taxi-bookings/{id}', [SuperAdminController::class, 'deleteAirTaxiBooking'])->name('bookings.air_taxi.delete');
+
+        // Ride Booking Routes
+        Route::get('/packages/rides/{ride}/book', [SuperAdminController::class, 'showBookingForm'])->name('packages.rides.book');
+        Route::post('/packages/rides/book/store', [SuperAdminController::class, 'storeRideBooking'])->name('packages.rides.book.store');
+        Route::post('/packages/rides/validate-promo', [SuperAdminController::class, 'validatePromoCode'])->name('packages.rides.validate_promo');
     });
 
 

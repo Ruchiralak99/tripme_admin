@@ -146,6 +146,7 @@
             <div>
               <h3 class="text-lg font-medium leading-6 text-gray-900 sm:text-xl">Book Air Taxi Service</h3>
               <p class="mt-1 text-sm text-gray-500">Fill in the details below to book your helicopter experience.</p>
+              <p class="mt-1 text-sm font-medium text-red-500">You must enter passenger details equal to the available seats — Fewer passengers cannot book a Air Taxi</p>
             </div>
             <button type="button" id="closeBookingBtn" class="ml-4 text-gray-400 hover:text-gray-600 transition-colors" aria-label="Close">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -208,6 +209,24 @@
                   <p class="mt-1 text-xs text-gray-500">Describe the purpose of your helicopter trip</p>
                 </div>
                 <div>
+                  <label for="start_point" class="block text-sm font-medium text-gray-700 mb-2">Start Point *</label>
+                  <input type="text" id="start_point" name="start_point" required
+                         placeholder="e.g., Colombo Airport, Hotel, etc."
+                         class="block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
+                  <p class="mt-1 text-xs text-gray-500">Where your journey begins</p>
+                </div>
+                <div>
+                  <label for="end_point" class="block text-sm font-medium text-gray-700 mb-2">End Point *</label>
+                  <input type="text" id="end_point" name="end_point" required
+                         placeholder="e.g., Kandy, Galle, Hotel, etc."
+                         class="block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
+                  <p class="mt-1 text-xs text-gray-500">Your destination</p>
+                </div>
+              </div>
+
+              {{-- Date and Time Row --}}
+              <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 mt-4">
+                <div>
                   <label for="booking_date" class="block text-sm font-medium text-gray-700 mb-2">Date *</label>
                   <input type="date" id="booking_date" name="booking_date" required
                          min="{{ now()->addDays(3)->format('Y-m-d') }}"
@@ -248,132 +267,11 @@
 
 {{-- Close the page container --}}
 </div>
-<div id="bookingModal"
-     class="fixed inset-0 z-[60] hidden"
-     aria-hidden="true"
-     role="dialog"
-     aria-modal="true">
-  {{-- Overlay --}}
-  <div id="bookingOverlay" class="absolute inset-0 bg-black/60 opacity-0 transition-opacity duration-300"></div>
-
-  {{-- Modal Container - Centered with Scrolling --}}
-  <div class="relative z-10 w-full h-full overflow-y-auto">
-    <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-      {{-- Dialog --}}
-      <div id="bookingDialog"
-           class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all w-full max-w-4xl opacity-0 scale-95 duration-300 ease-out">
-
-      {{-- Scrollable Content --}}
-      <div class="flex flex-col max-h-[95vh]">
-        {{-- Header - Fixed --}}
-        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 border-b border-gray-200">
-          <div class="flex items-center justify-between">
-            <div>
-              <h3 class="text-lg font-medium leading-6 text-gray-900 sm:text-xl">Book Air Taxi Service</h3>
-              <p class="mt-1 text-sm text-gray-500">Fill in the details below to book your helicopter experience.</p>
-            </div>
-            <button type="button" id="closeBookingBtn" class="ml-4 text-gray-400 hover:text-gray-600 transition-colors" aria-label="Close">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        {{-- Content - Scrollable (Fixed Height) --}}
-        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 max-h-[60vh] overflow-y-auto">
-          <form action="{{ route('super_admin.packages.air_taxi.book') }}" method="POST" id="bookingForm">
-            @csrf      {{-- Basic Information --}}
-      <div class="mb-6 sm:mb-8">
-        <h4 class="text-base sm:text-lg font-semibold text-slate-900 mb-3 sm:mb-4">Basic Information</h4>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-          <div>
-            <label for="full_name" class="block text-sm font-medium text-slate-700 mb-2">Full Name *</label>
-            <input type="text" id="full_name" name="full_name" required
-                   class="w-full px-3 sm:px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors text-sm sm:text-base"
-                   placeholder="Enter your full name">
-          </div>
-          <div>
-            <label for="phone_number" class="block text-sm font-medium text-slate-700 mb-2">Phone Number *</label>
-            <input type="tel" id="phone_number" name="phone_number" required
-                   class="w-full px-3 sm:px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors text-sm sm:text-base"
-                   placeholder="Enter your phone number">
-          </div>
-        </div>
-      </div>
-
-      {{-- Aircraft Selection --}}
-      <div class="mb-6 sm:mb-8">
-        <h4 class="text-base sm:text-lg font-semibold text-slate-900 mb-3 sm:mb-4">Aircraft Selection</h4>
-        <div>
-          <label for="aircraft_id" class="block text-sm font-medium text-slate-700 mb-2">Select Aircraft *</label>
-          <select id="aircraft_id" name="aircraft_id" required
-                  class="w-full px-3 sm:px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors text-sm sm:text-base">
-            <option value="">Choose an aircraft...</option>
-            @foreach($aircrafts as $aircraft)
-              <option value="{{ $aircraft->id }}" data-seats="{{ (int) $aircraft->passenger_seats }}">
-                {{ $aircraft->name }} ({{ (int) $aircraft->passenger_seats }} seats available)
-              </option>
-            @endforeach
-          </select>
-        </div>
-      </div>
-
-      {{-- Booking Details --}}
-      <div class="mb-6 sm:mb-8">
-        <h4 class="text-base sm:text-lg font-semibold text-slate-900 mb-3 sm:mb-4">Booking Details</h4>
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4">
-          <div class="lg:col-span-1">
-            <label for="tour_type" class="block text-sm font-medium text-slate-700 mb-2">Tour Type (Reason) *</label>
-            <input type="text" id="tour_type" name="tour_type" required
-                   placeholder="Enter the reason for your flight (e.g., City Tour, Airport Transfer, Business Meeting)"
-                   class="w-full px-3 sm:px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors text-sm sm:text-base">
-            <p class="text-xs text-slate-500 mt-1">Describe the purpose of your helicopter trip</p>
-          </div>
-          <div>
-            <label for="booking_date" class="block text-sm font-medium text-slate-700 mb-2">Date *</label>
-            <input type="date" id="booking_date" name="booking_date" required
-                   min="{{ now()->addDays(3)->format('Y-m-d') }}"
-                   class="w-full px-3 sm:px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors text-sm sm:text-base">
-            <p class="text-xs text-slate-500 mt-1">Minimum 3 days advance booking required</p>
-          </div>
-          <div>
-            <label for="booking_time" class="block text-sm font-medium text-slate-700 mb-2">Time *</label>
-            <input type="time" id="booking_time" name="booking_time" required
-                   class="w-full px-3 sm:px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors text-sm sm:text-base">
-          </div>
-        </div>
-      </div>
-
-      {{-- Passenger Information --}}
-      <div id="passengerSection" class="mb-6 sm:mb-8 hidden">
-        <h4 class="text-base sm:text-lg font-semibold text-slate-900 mb-3 sm:mb-4">Passenger Information</h4>
-        <div id="passengerFields" class="space-y-3 sm:space-y-4"></div>
-      </div>
-    </form>
-        </div>
-
-        {{-- Footer - Fixed --}}
-        <div class="flex-shrink-0 bg-white border-t border-slate-200 p-4 sm:p-6 rounded-b-xl sm:rounded-b-2xl">
-          <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 sm:gap-4">
-            <button type="button" id="cancelBookingBtn"
-                    class="px-4 sm:px-6 py-2 text-slate-600 hover:text-slate-800 transition-colors text-sm sm:text-base order-2 sm:order-1">
-              Cancel
-            </button>
-            <button type="submit" form="bookingForm"
-                    class="px-4 sm:px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors duration-200 font-medium text-sm sm:text-base order-1 sm:order-2">
-              Book Air Taxi
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 {{-- Enhanced JavaScript for Beautiful Modal --}}
 <script>
-(function() {
+(function () {
+  // Cache elements safely
   const modal      = document.getElementById('bookingModal');
   const overlay    = document.getElementById('bookingOverlay');
   const dialog     = document.getElementById('bookingDialog');
@@ -385,9 +283,12 @@
   const paxSec     = document.getElementById('passengerSection');
   const paxFields  = document.getElementById('passengerFields');
 
-  // Enable all booking buttons
-  document.querySelectorAll('[data-open-booking], #openBookingBtn').forEach(btn => {
-    btn.addEventListener('click', openModal);
+  // ---- Guard: if required nodes are missing, don't bind anything
+  if (!modal || !overlay || !dialog || !form) return;
+
+  // Enable all booking buttons (global + specific)
+  document.querySelectorAll('[data-open-booking], #openBookingBtn').forEach((btn) => {
+    btn?.addEventListener('click', openModal);
   });
 
   closeBtn?.addEventListener('click', closeModal);
@@ -401,43 +302,39 @@
   aircraftEl?.addEventListener('change', updatePassengerFields);
 
   function openModal() {
-    if (!modal || !overlay || !dialog) return;
-
     modal.classList.remove('hidden');
     modal.setAttribute('aria-hidden', 'false');
 
-    // Simple animation
+    // animate in
     requestAnimationFrame(() => {
       overlay.classList.remove('opacity-0');
       dialog.classList.remove('opacity-0', 'scale-95');
     });
 
-    // Prevent body scroll
+    // lock scroll
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
 
-    // Focus the first input
+    // focus first input
     setTimeout(() => {
       document.getElementById('full_name')?.focus();
     }, 300);
   }
 
   function closeModal() {
-    if (!modal || !overlay || !dialog) return;
-
-    // Animate out
+    // animate out
     overlay.classList.add('opacity-0');
     dialog.classList.add('opacity-0', 'scale-95');
 
-    // Hide after animation
+    // hide after animation
     setTimeout(() => {
       modal.classList.add('hidden');
       modal.setAttribute('aria-hidden', 'true');
-      form?.reset();
+      form.reset();
       paxSec?.classList.add('hidden');
-      paxFields.innerHTML = '';
+      if (paxFields) paxFields.innerHTML = '';
 
-      // Re-enable body scroll
+      // unlock scroll
       document.documentElement.style.overflow = '';
       document.body.style.overflow = '';
     }, 300);
@@ -447,16 +344,17 @@
     if (!aircraftEl || !paxSec || !paxFields) return;
 
     const selectedOption = aircraftEl.options[aircraftEl.selectedIndex];
-    const seats = selectedOption?.dataset.seats ? parseInt(selectedOption.dataset.seats) : 0;
+    const seats = selectedOption?.dataset?.seats ? parseInt(selectedOption.dataset.seats, 10) : 0;
 
     paxFields.innerHTML = '';
 
-    if (seats > 0) {
+    if (Number.isFinite(seats) && seats > 0) {
       paxSec.classList.remove('hidden');
 
       for (let i = 1; i <= seats; i++) {
         const passengerDiv = document.createElement('div');
-        passengerDiv.className = 'bg-white rounded-xl p-6 border-2 border-blue-100 hover:border-blue-200 shadow-lg hover:shadow-xl transition-all duration-200';
+        passengerDiv.className =
+          'bg-white rounded-xl p-6 border-2 border-blue-100 hover:border-blue-200 shadow-lg hover:shadow-xl transition-all duration-200';
 
         passengerDiv.innerHTML = `
           <div class="flex items-center mb-4">
@@ -498,7 +396,6 @@
             </div>
           </div>
         `;
-
         paxFields.appendChild(passengerDiv);
       }
     } else {
@@ -507,120 +404,65 @@
   }
 
   // Form enhancement with passenger data processing
-  form?.addEventListener('submit', function(e) {
+  form.addEventListener('submit', function (e) {
     e.preventDefault();
 
-    // Process passenger data to the expected format
+    // Collect flat arrays
     const passengerNames = Array.from(form.querySelectorAll('input[name="passenger_names[]"]'));
-    const passengerNics = Array.from(form.querySelectorAll('input[name="passenger_nics[]"]'));
+    const passengerNics  = Array.from(form.querySelectorAll('input[name="passenger_nics[]"]'));
 
-    // Create passengers array in the expected format
+    // Build structured passengers array
     const passengers = passengerNames.map((nameInput, index) => ({
-      name: nameInput.value,
-      nic: passengerNics[index]?.value || ''
+      name: nameInput.value?.trim() || '',
+      nic:  passengerNics[index]?.value?.trim() || '',
     }));
 
-    // Add passengers data as hidden inputs
-    const existingPassengerInputs = form.querySelectorAll('input[name^="passengers"]');
-    existingPassengerInputs.forEach(input => input.remove());
+    // Remove previously added hidden inputs (if any)
+    form.querySelectorAll('input[name^="passengers["]').forEach((el) => el.remove());
 
-    passengers.forEach((passenger, index) => {
-      const nameInput = document.createElement('input');
-      nameInput.type = 'hidden';
-      nameInput.name = `passengers[${index}][name]`;
-      nameInput.value = passenger.name;
-      form.appendChild(nameInput);
+    // Append hidden structured inputs
+    passengers.forEach((p, i) => {
+      const nameHidden = document.createElement('input');
+      nameHidden.type = 'hidden';
+      nameHidden.name = `passengers[${i}][name]`;
+      nameHidden.value = p.name;
+      form.appendChild(nameHidden);
 
-      const nicInput = document.createElement('input');
-      nicInput.type = 'hidden';
-      nicInput.name = `passengers[${index}][nic]`;
-      nicInput.value = passenger.nic;
-      form.appendChild(nicInput);
+      const nicHidden = document.createElement('input');
+      nicHidden.type = 'hidden';
+      nicHidden.name = `passengers[${i}][nic]`;
+      nicHidden.value = p.nic;
+      form.appendChild(nicHidden);
     });
 
+    // Loading state
     const submitBtn = form.querySelector('button[type="submit"]');
     if (submitBtn) {
+      submitBtn.disabled = true;
       submitBtn.innerHTML = `
-        <svg class="animate-spin w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        <svg class="animate-spin w-5 h-5 mr-2 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
         </svg>
         Processing Booking...
       `;
-      submitBtn.disabled = true;
     }
 
     // Submit the form
     form.submit();
   });
 
-  // Add smooth scrolling to form sections
-  document.querySelectorAll('input, select, textarea').forEach(input => {
-    input.addEventListener('focus', function() {
-      this.parentElement.classList.add('ring-2', 'ring-blue-200');
+  // Focus ring enhancement (safe)
+  document.querySelectorAll('input, select, textarea').forEach((input) => {
+    input.addEventListener('focus', function () {
+      this.parentElement?.classList.add('ring-2', 'ring-blue-200');
     });
-
-    input.addEventListener('blur', function() {
-      this.parentElement.classList.remove('ring-2', 'ring-blue-200');
+    input.addEventListener('blur', function () {
+      this.parentElement?.classList.remove('ring-2', 'ring-blue-200');
     });
   });
 })();
 </script>
 
-    // Animate out
-    overlay.classList.add('opacity-0');
-    dialog.classList.add('opacity-0', 'scale-95');
-
-    // After transition, hide
-    setTimeout(() => {
-      modal.classList.remove('flex');
-      modal.classList.add('hidden');
-      // Reset form & passengers
-      form?.reset();
-      paxSec?.classList.add('hidden');
-      if (paxFields) paxFields.innerHTML = '';
-      // Restore scroll
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
-    }, 200);
-  }
-
-  function updatePassengerFields() {
-    if (!aircraftEl || !paxFields || !paxSec) return;
-
-    const option = aircraftEl.options[aircraftEl.selectedIndex];
-    const seats  = parseInt(option?.dataset?.seats || '0', 10);
-
-    paxFields.innerHTML = '';
-
-    if (Number.isFinite(seats) && seats > 0) {
-      for (let i = 0; i < seats; i++) {
-        const wrap = document.createElement('div');
-        wrap.className = 'bg-slate-50 p-3 sm:p-4 rounded-lg';
-        wrap.innerHTML = `
-          <h5 class="font-medium text-slate-900 mb-2 sm:mb-3 text-sm sm:text-base">Passenger ${i + 1}</h5>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            <div>
-              <label class="block text-sm font-medium text-slate-700 mb-1">Full Name *</label>
-              <input type="text" name="passengers[${i}][name]" required
-                     class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors text-sm sm:text-base"
-                     placeholder="Enter passenger name">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-slate-700 mb-1">NIC Number *</label>
-              <input type="text" name="passengers[${i}][nic]" required
-                     class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors text-sm sm:text-base"
-                     placeholder="Enter NIC number">
-            </div>
-          </div>
-        `;
-        paxFields.appendChild(wrap);
-      }
-      paxSec.classList.remove('hidden');
-    } else {
-      paxSec.classList.add('hidden');
-    }
-  }
-})();
-</script>
 
 @endsection

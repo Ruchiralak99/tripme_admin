@@ -7,7 +7,7 @@
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
     <div>
       <div class="flex items-center gap-3 mb-2">
-        <a href="{{ route('super_admin.packages.rides') }}" class="text-slate-400 hover:text-slate-600 transition-colors">
+        <a href="{{ route('super_admin.packages.rides.rides') }}" class="text-slate-400 hover:text-slate-600 transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
           </svg>
@@ -230,7 +230,7 @@
                 </svg>
                 Create Category
             </button>
-            <a href="{{ route('super_admin.packages.rides') }}" class="inline-flex items-center justify-center px-6 py-3 bg-slate-500 text-white rounded-lg hover:bg-slate-600 transition-colors duration-200 font-medium">
+            <a href="{{ route('super_admin.packages.rides.rides') }}" class="inline-flex items-center justify-center px-6 py-3 bg-slate-500 text-white rounded-lg hover:bg-slate-600 transition-colors duration-200 font-medium">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>

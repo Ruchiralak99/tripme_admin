@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Super_Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Ride;
+use App\Models\RideCity;
+use App\Models\RideBooking;
+use App\Models\Payment;
+use App\Models\PromoCode;
 use App\Models\Aircraft;
 use App\Models\AirTaxiBooking;
 use Illuminate\Http\Request;
@@ -12,6 +16,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Password;
 
 class SuperAdminController extends Controller
@@ -243,6 +249,8 @@ class SuperAdminController extends Controller
             'phone_number' => 'required|string|max:20',
             'aircraft_id' => 'required|exists:aircrafts,id',
             'tour_type' => 'required|string|max:255',
+            'start_point' => 'required|string|max:255',
+            'end_point' => 'required|string|max:255',
             'booking_date' => 'required|date|after:' . now()->addDays(3)->format('Y-m-d'),
             'booking_time' => 'required',
             'passengers' => 'required|array|min:1',
@@ -256,6 +264,8 @@ class SuperAdminController extends Controller
             'full_name' => $request->full_name,
             'phone_number' => $request->phone_number,
             'tour_type' => $request->tour_type,
+            'start_point' => $request->start_point,
+            'end_point' => $request->end_point,
             'booking_date' => $request->booking_date,
             'booking_time' => $request->booking_time,
             'passengers' => $request->passengers,
@@ -416,6 +426,241 @@ class SuperAdminController extends Controller
                          ->with('success', 'Ride category deleted successfully!');
     }
 
+    // Ride Cities Management
+    public function rideCities()
+    {
+        $cities = RideCity::orderBy('created_at', 'desc')->get();
+        return view('super_admin.packages.rides.cities', compact('cities'));
+    }
+
+    public function rideCitiesStore(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255|unique:ride_cities,name',
+            'description' => 'nullable|string|max:1000',
+            'status' => 'required|in:active,inactive'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        RideCity::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'status' => $request->status ?? 'active'
+        ]);
+
+        return redirect()->route('super_admin.packages.rides.cities')
+                         ->with('success', 'City added successfully!');
+    }
+
+    public function rideCitiesDelete(RideCity $city)
+    {
+        $city->delete();
+
+        return redirect()->route('super_admin.packages.rides.cities')
+                         ->with('success', 'City deleted successfully!');
+    }
+
+    // Ride Booking Management
+    public function showBookingForm(Ride $ride)
+    {
+        $cities = RideCity::where('status', 'active')->orderBy('name')->get();
+        return view('super_admin.packages.rides.book', compact('ride', 'cities'));
+    }
+
+    public function validatePromoCode(Request $request)
+    {
+        $promoCode = PromoCode::where('code', $request->promo_code)
+                              ->where('status', 'active')
+                              ->first();
+
+        if (!$promoCode) {
+            return response()->json([
+                'valid' => false,
+                'message' => 'Invalid promo code'
+            ]);
+        }
+
+        if (!$promoCode->isValid($request->amount)) {
+            return response()->json([
+                'valid' => false,
+                'message' => 'Promo code is not valid or has expired'
+            ]);
+        }
+
+        $discount = $promoCode->calculateDiscount($request->amount);
+
+        return response()->json([
+            'valid' => true,
+            'discount' => $discount,
+            'message' => 'Promo code applied successfully!'
+        ]);
+    }
+
+    public function storeRideBooking(Request $request)
+    {
+        // Debug: Log all request data
+        Log::info('Booking form submitted', [
+            'all_data' => $request->all(),
+            'files' => $request->hasFile('payment_slip') ? 'Payment slip uploaded' : 'No payment slip'
+        ]);
+
+        $validator = Validator::make($request->all(), [
+            'ride_id' => 'required|exists:rides,id',
+            'city_id' => 'required|exists:ride_cities,id',
+            'full_name' => 'required|string|max:255',
+            'phone_number' => 'required|string|max:20',
+            'email' => 'required|email|max:255',
+            'quantity' => 'required|integer|min:1',
+            'passengers' => 'required|array|min:1',
+            'passengers.*.name' => 'required|string|max:255',
+            'passengers.*.nic' => 'required|string|max:20',
+            'payment_type' => 'required|in:tentative,partial,full',
+            'additional_notes' => 'nullable|string|max:1000',
+            'promo_code' => 'nullable|string|exists:promo_codes,code',
+            'partial_amount' => 'required_if:payment_type,partial|nullable|numeric|min:5000',
+            'payment_slip' => 'required_if:payment_type,partial,full|nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'reference_number' => 'required_if:payment_type,partial,full|nullable|string|max:100'
+        ]);
+
+        if ($validator->fails()) {
+            Log::info('Validation failed', ['errors' => $validator->errors()->toArray()]);
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        Log::info('Validation passed, starting booking creation');
+
+        $ride = Ride::findOrFail($request->ride_id);
+
+        // Check passenger capacity if set
+        if ($ride->passenger_capacity && $request->quantity > $ride->passenger_capacity) {
+            return redirect()->back()->withErrors(['quantity' => 'Quantity exceeds passenger capacity for this ride.'])->withInput();
+        }
+
+        // Calculate pricing
+        $basePrice = $ride->price_lkr;
+        $subtotal = $basePrice * $request->quantity;
+        $taxAmount = ($subtotal * $ride->tax_percentage) / 100;
+
+        // Apply promo code discount
+        $promoDiscount = 0;
+        $promoCode = null;
+        if ($request->promo_code) {
+            $promoCode = PromoCode::where('code', $request->promo_code)->first();
+            if ($promoCode && $promoCode->isValid($subtotal + $taxAmount)) {
+                $promoDiscount = $promoCode->calculateDiscount($subtotal + $taxAmount);
+            }
+        }
+
+        // Apply full payment discount (5%)
+        $fullPaymentDiscount = 0;
+        if ($request->payment_type === 'full') {
+            $fullPaymentDiscount = ($subtotal + $taxAmount - $promoDiscount) * 0.05;
+        }
+
+        $totalAmount = $subtotal + $taxAmount - $promoDiscount - $fullPaymentDiscount;
+
+        // Determine payment amounts
+        $paidAmount = 0;
+        $remainingAmount = $totalAmount;
+
+        if ($request->payment_type === 'partial') {
+            $paidAmount = $request->partial_amount;
+            $remainingAmount = $totalAmount - $paidAmount;
+        } elseif ($request->payment_type === 'full') {
+            $paidAmount = $totalAmount;
+            $remainingAmount = 0;
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Create booking
+            $booking = RideBooking::create([
+                'ride_id' => $request->ride_id,
+                'city_id' => $request->city_id,
+                'user_id' => Auth::id(),
+                'full_name' => $request->full_name,
+                'phone_number' => $request->phone_number,
+                'email' => $request->email,
+                'quantity' => $request->quantity,
+                'passengers' => $request->passengers,
+                'base_price' => $basePrice,
+                'tax_amount' => $taxAmount,
+                'subtotal' => $subtotal,
+                'promo_discount' => $promoDiscount,
+                'full_payment_discount' => $fullPaymentDiscount,
+                'total_amount' => $totalAmount,
+                'payment_type' => $request->payment_type,
+                'paid_amount' => $paidAmount,
+                'remaining_amount' => $remainingAmount,
+                'promo_code' => $request->promo_code,
+                'additional_notes' => $request->additional_notes,
+                'status' => 'pending'
+            ]);
+
+            // Handle payment if not tentative
+            if ($request->payment_type !== 'tentative' && $request->hasFile('payment_slip')) {
+                $paymentSlipPath = $request->file('payment_slip')->store('payment_slips', 'public');
+
+                Payment::create([
+                    'booking_id' => $booking->id,
+                    'booking_type' => 'ride',
+                    'amount' => $paidAmount,
+                    'payment_method' => 'bank_transfer',
+                    'payment_type' => $request->payment_type,
+                    'reference_number' => $request->reference_number,
+                    'payment_slip_path' => $paymentSlipPath,
+                    'status' => 'pending'
+                ]);
+            }
+
+            // Increment promo code usage if applied
+            if ($promoCode) {
+                $promoCode->incrementUsage();
+            }
+
+            DB::commit();
+
+            // Send email notification (you can implement this later)
+            $this->sendBookingConfirmationEmail($booking);
+
+            return redirect()->route('super_admin.packages.rides.rides')
+                           ->with('success', 'Booking created successfully! Booking Reference: ' . $booking->booking_reference);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            // Log the actual error for debugging
+            Log::error('Booking creation failed', [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()->withErrors(['error' => 'An error occurred while processing your booking: ' . $e->getMessage()])->withInput();
+        }
+    }
+
+    private function sendBookingConfirmationEmail($booking)
+    {
+        // TODO: Implement email notification
+        // You can use Laravel's Mail facade to send emails
+        // Mail::to($booking->email)->send(new BookingConfirmationMail($booking));
+
+        // For now, just log the booking for reference
+        Log::info('Booking created', [
+            'booking_reference' => $booking->booking_reference,
+            'customer_email' => $booking->email,
+            'ride_name' => $booking->ride->name,
+            'total_amount' => $booking->total_amount,
+            'payment_type' => $booking->payment_type
+        ]);
+    }
+
     // Tours Package Management
     public function tours()
     {
@@ -552,5 +797,225 @@ class SuperAdminController extends Controller
                          ->with('success', 'Aircraft deleted successfully!');
     }
 
+    // Cut From below Here to add Admin Functions
+    public function showAirTaxiBookings(Request $request)
+    {
+        $query = AirTaxiBooking::with(['user', 'aircraft']);
+
+        // Filter by date range
+        if ($request->has('filter') && $request->filter) {
+            switch ($request->filter) {
+                case 'today':
+                    $query->whereDate('created_at', now());
+                    break;
+                case 'week':
+                    $query->where('created_at', '>=', now()->subWeek());
+                    break;
+                case 'month':
+                    $query->where('created_at', '>=', now()->subMonth());
+                    break;
+            }
+        }
+
+        // Search functionality
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('full_name', 'LIKE', "%{$search}%")
+                  ->orWhere('phone_number', 'LIKE', "%{$search}%")
+                  ->orWhere('tour_type', 'LIKE', "%{$search}%")
+                  ->orWhereHas('user', function($userQuery) use ($search) {
+                      $userQuery->where('email', 'LIKE', "%{$search}%");
+                  });
+            });
+        }
+
+        $airTaxiBookings = $query->latest()->paginate(15);
+        return view('super_admin.bookings.air_taxi.air_taxi_bookings', compact('airTaxiBookings'));
+    }
+
+    public function viewAirTaxiBooking($id)
+    {
+        $booking = AirTaxiBooking::with(['user', 'aircraft'])->findOrFail($id);
+        return view('super_admin.bookings.air_taxi.view', compact('booking'));
+    }
+
+    public function editAirTaxiBooking($id)
+    {
+        $booking = AirTaxiBooking::with(['user', 'aircraft'])->findOrFail($id);
+        $aircrafts = Aircraft::where('status', true)->get();
+        return view('super_admin.bookings.air_taxi.edit', compact('booking', 'aircrafts'));
+    }
+
+    public function updateAirTaxiBooking(Request $request, $id)
+    {
+        $booking = AirTaxiBooking::findOrFail($id);
+
+        $request->validate([
+            'full_name' => 'required|string|max:255',
+            'phone_number' => 'required|string|max:20',
+            'tour_type' => 'required|string|max:255',
+            'start_point' => 'required|string|max:255',
+            'end_point' => 'required|string|max:255',
+            'booking_date' => 'required|date|after_or_equal:' . now()->addDays(1)->format('Y-m-d'),
+            'booking_time' => 'required',
+            'status' => 'required|in:pending,confirmed,cancelled,completed',
+            'passengers' => 'required|array|min:1',
+            'passengers.*.name' => 'required|string|max:255',
+            'passengers.*.nic' => 'required|string|max:20',
+            'notes' => 'nullable|string'
+        ]);
+
+        $booking->update([
+            'full_name' => $request->full_name,
+            'phone_number' => $request->phone_number,
+            'tour_type' => $request->tour_type,
+            'start_point' => $request->start_point,
+            'end_point' => $request->end_point,
+            'booking_date' => $request->booking_date,
+            'booking_time' => $request->booking_time,
+            'passengers' => $request->passengers,
+            'status' => $request->status,
+            'notes' => $request->notes,
+            'confirmed_at' => $request->status === 'confirmed' ? now() : null
+        ]);
+
+        return redirect()->route('super_admin.bookings.air_taxi.bookings')
+                        ->with('success', 'Booking updated successfully!');
+    }
+
+    public function updateAirTaxiBookingStatus(Request $request, $id)
+    {
+        $booking = AirTaxiBooking::findOrFail($id);
+
+        $request->validate([
+            'status' => 'required|in:pending,confirmed,cancelled,completed'
+        ]);
+
+        $booking->update([
+            'status' => $request->status,
+            'confirmed_at' => $request->status === 'confirmed' ? now() : null
+        ]);
+
+        // Return JSON for AJAX requests
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Booking status updated successfully!']);
+        }
+
+        return redirect()->back()->with('success', 'Booking status updated successfully!');
+    }
+
+    public function deleteAirTaxiBooking($id)
+    {
+        $booking = AirTaxiBooking::findOrFail($id);
+        $booking->delete();
+
+        return redirect()->route('super_admin.bookings.air_taxi.bookings')
+                        ->with('success', 'Booking deleted successfully!');
+    }
+
+    // Promo Code Routes
+
+    public function promoCodes()
+    {
+        $promoCodes = PromoCode::latest()->paginate(15);
+        return view('super_admin.promocodes.promo_code', compact('promoCodes'));
+    }
+
+    public function createPromoCode()
+    {
+        return view('super_admin.promocodes.create');
+    }
+
+    public function storePromoCode(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string|max:50|unique:promo_codes,code',
+            'description' => 'required|string|max:255',
+            'author' => 'nullable|string|max:255',
+            'discount_type' => 'required|in:percentage,fixed',
+            'discount_value' => 'required|numeric|min:0',
+            'minimum_amount' => 'nullable|numeric|min:0',
+            'maximum_discount' => 'nullable|numeric|min:0',
+            'usage_limit' => 'nullable|integer|min:1',
+            'valid_from' => 'required|date|after_or_equal:today',
+            'valid_until' => 'required|date|after:valid_from',
+            'status' => 'required|in:active,inactive',
+        ]);
+
+        PromoCode::create([
+            'code' => strtoupper($request->code),
+            'description' => $request->description,
+            'author' => $request->author,
+            'discount_type' => $request->discount_type,
+            'discount_value' => $request->discount_value,
+            'minimum_amount' => $request->minimum_amount,
+            'maximum_discount' => $request->maximum_discount,
+            'usage_limit' => $request->usage_limit,
+            'valid_from' => $request->valid_from,
+            'valid_until' => $request->valid_until,
+            'status' => $request->status,
+        ]);
+
+        return redirect()->route('super_admin.promo_codes')
+                        ->with('success', 'Promo code created successfully!');
+    }
+
+    public function viewPromoCode($id)
+    {
+        $promoCode = PromoCode::findOrFail($id);
+        return view('super_admin.promocodes.view', compact('promoCode'));
+    }
+
+    public function editPromoCode($id)
+    {
+        $promoCode = PromoCode::findOrFail($id);
+        return view('super_admin.promocodes.edit', compact('promoCode'));
+    }
+
+    public function updatePromoCode(Request $request, $id)
+    {
+        $promoCode = PromoCode::findOrFail($id);
+
+        $request->validate([
+            'code' => 'required|string|max:50|unique:promo_codes,code,' . $id,
+            'description' => 'required|string|max:255',
+            'author' => 'nullable|string|max:255',
+            'discount_type' => 'required|in:percentage,fixed',
+            'discount_value' => 'required|numeric|min:0',
+            'minimum_amount' => 'nullable|numeric|min:0',
+            'maximum_discount' => 'nullable|numeric|min:0',
+            'usage_limit' => 'nullable|integer|min:1',
+            'valid_from' => 'required|date',
+            'valid_until' => 'required|date|after:valid_from',
+            'status' => 'required|in:active,inactive',
+        ]);
+
+        $promoCode->update([
+            'code' => strtoupper($request->code),
+            'description' => $request->description,
+            'author' => $request->author,
+            'discount_type' => $request->discount_type,
+            'discount_value' => $request->discount_value,
+            'minimum_amount' => $request->minimum_amount,
+            'maximum_discount' => $request->maximum_discount,
+            'usage_limit' => $request->usage_limit,
+            'valid_from' => $request->valid_from,
+            'valid_until' => $request->valid_until,
+            'status' => $request->status,
+        ]);
+
+        return redirect()->route('super_admin.promo_codes')
+                        ->with('success', 'Promo code updated successfully!');
+    }
+
+    public function deletePromoCode($id)
+    {
+        $promoCode = PromoCode::findOrFail($id);
+        $promoCode->delete();
+
+        return redirect()->route('super_admin.promo_codes')
+                        ->with('success', 'Promo code deleted successfully!');
+    }
 
 }
