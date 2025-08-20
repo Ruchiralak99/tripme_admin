@@ -11,14 +11,47 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+      Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+
+            // Basic info
+            $table->string('first_name', 100);
+            $table->string('last_name', 100);
+            $table->string('email', 150)->unique();
             $table->string('password');
-            $table->rememberToken();
-            $table->timestamps();
+
+            // Business / Vendor details
+            $table->string('business_name')->nullable();
+            $table->enum('role', [
+                'super_admin',
+                'admin',
+                'affiliate',
+                'payment_officer',
+                'booking_officer',
+                'vendor',
+                'user'
+            ])->default('user');
+            $table->string('vendor_type')->nullable();
+
+            // Contact details
+            $table->string('contact_number', 20)->nullable();
+            $table->string('nic_number', 20)->nullable();
+
+            // Extra fields for future improvements
+            $table->string('profile_image')->nullable();
+            $table->string('address')->nullable();
+            $table->string('city', 100)->nullable();
+            $table->string('state', 100)->nullable();
+            $table->string('country', 100)->nullable();
+            $table->string('postal_code', 20)->nullable();
+
+            // Account management
+            $table->boolean('is_active')->default(true);
+            $table->timestamp('last_login_at')->nullable();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->rememberToken(); // For "remember me" login sessions
+
+            $table->timestamps(); // created_at & updated_at
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
