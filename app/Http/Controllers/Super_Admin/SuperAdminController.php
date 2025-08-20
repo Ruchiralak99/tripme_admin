@@ -552,5 +552,117 @@ class SuperAdminController extends Controller
                          ->with('success', 'Aircraft deleted successfully!');
     }
 
+    // Cut From below Here to add Admin Functions
+    public function showAirTaxiBookings(Request $request)
+    {
+        $query = AirTaxiBooking::with(['user', 'aircraft']);
+
+        // Filter by date range
+        if ($request->has('filter') && $request->filter) {
+            switch ($request->filter) {
+                case 'today':
+                    $query->whereDate('created_at', now());
+                    break;
+                case 'week':
+                    $query->where('created_at', '>=', now()->subWeek());
+                    break;
+                case 'month':
+                    $query->where('created_at', '>=', now()->subMonth());
+                    break;
+            }
+        }
+
+        // Search functionality
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('full_name', 'LIKE', "%{$search}%")
+                  ->orWhere('phone_number', 'LIKE', "%{$search}%")
+                  ->orWhere('tour_type', 'LIKE', "%{$search}%")
+                  ->orWhereHas('user', function($userQuery) use ($search) {
+                      $userQuery->where('email', 'LIKE', "%{$search}%");
+                  });
+            });
+        }
+
+        $airTaxiBookings = $query->latest()->paginate(15);
+        return view('super_admin.bookings.air_taxi.air_taxi_bookings', compact('airTaxiBookings'));
+    }
+
+    public function viewAirTaxiBooking($id)
+    {
+        $booking = AirTaxiBooking::with(['user', 'aircraft'])->findOrFail($id);
+        return view('super_admin.bookings.air_taxi.view', compact('booking'));
+    }
+
+    public function editAirTaxiBooking($id)
+    {
+        $booking = AirTaxiBooking::with(['user', 'aircraft'])->findOrFail($id);
+        $aircrafts = Aircraft::where('status', true)->get();
+        return view('super_admin.bookings.air_taxi.edit', compact('booking', 'aircrafts'));
+    }
+
+    public function updateAirTaxiBooking(Request $request, $id)
+    {
+        $booking = AirTaxiBooking::findOrFail($id);
+
+        $request->validate([
+            'full_name' => 'required|string|max:255',
+            'phone_number' => 'required|string|max:20',
+            'tour_type' => 'required|string|max:255',
+            'booking_date' => 'required|date|after_or_equal:' . now()->addDays(1)->format('Y-m-d'),
+            'booking_time' => 'required',
+            'status' => 'required|in:pending,confirmed,cancelled,completed',
+            'passengers' => 'required|array|min:1',
+            'passengers.*.name' => 'required|string|max:255',
+            'passengers.*.nic' => 'required|string|max:20',
+            'notes' => 'nullable|string'
+        ]);
+
+        $booking->update([
+            'full_name' => $request->full_name,
+            'phone_number' => $request->phone_number,
+            'tour_type' => $request->tour_type,
+            'booking_date' => $request->booking_date,
+            'booking_time' => $request->booking_time,
+            'passengers' => $request->passengers,
+            'status' => $request->status,
+            'notes' => $request->notes,
+            'confirmed_at' => $request->status === 'confirmed' ? now() : null
+        ]);
+
+        return redirect()->route('super_admin.bookings.air_taxi.bookings')
+                        ->with('success', 'Booking updated successfully!');
+    }
+
+    public function updateAirTaxiBookingStatus(Request $request, $id)
+    {
+        $booking = AirTaxiBooking::findOrFail($id);
+
+        $request->validate([
+            'status' => 'required|in:pending,confirmed,cancelled,completed'
+        ]);
+
+        $booking->update([
+            'status' => $request->status,
+            'confirmed_at' => $request->status === 'confirmed' ? now() : null
+        ]);
+
+        // Return JSON for AJAX requests
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Booking status updated successfully!']);
+        }
+
+        return redirect()->back()->with('success', 'Booking status updated successfully!');
+    }
+
+    public function deleteAirTaxiBooking($id)
+    {
+        $booking = AirTaxiBooking::findOrFail($id);
+        $booking->delete();
+
+        return redirect()->route('super_admin.bookings.air_taxi.bookings')
+                        ->with('success', 'Booking deleted successfully!');
+    }
 
 }

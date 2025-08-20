@@ -60,6 +60,15 @@ Route::middleware('auth')->group(function () {
         Route::put('/aircrafts/{id}', [SuperAdminController::class, 'updateAircraft'])->name('aircrafts.update');
         Route::get('/aircrafts/{id}/view', [SuperAdminController::class, 'viewAircraft'])->name('aircrafts.view');
         Route::delete('/aircrafts/{id}', [SuperAdminController::class, 'deleteAircraft'])->name('aircrafts.delete');
+
+
+        // Booking management
+        Route::get('/bookings/air-taxi-bookings', [SuperAdminController::class, 'showAirTaxiBookings'])->name('bookings.air_taxi.bookings');
+        Route::get('/bookings/air-taxi-bookings/{id}/view', [SuperAdminController::class, 'viewAirTaxiBooking'])->name('bookings.air_taxi.view');
+        Route::get('/bookings/air-taxi-bookings/{id}/edit', [SuperAdminController::class, 'editAirTaxiBooking'])->name('bookings.air_taxi.edit');
+        Route::put('/bookings/air-taxi-bookings/{id}', [SuperAdminController::class, 'updateAirTaxiBooking'])->name('bookings.air_taxi.update');
+        Route::patch('/bookings/air-taxi-bookings/{id}/status', [SuperAdminController::class, 'updateAirTaxiBookingStatus'])->name('bookings.air_taxi.status');
+        Route::delete('/bookings/air-taxi-bookings/{id}', [SuperAdminController::class, 'deleteAirTaxiBooking'])->name('bookings.air_taxi.delete');
     });
 
 
