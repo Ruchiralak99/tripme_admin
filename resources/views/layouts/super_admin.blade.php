@@ -5,6 +5,7 @@
   <meta charset="utf-8" />
   <title>TripMe Admin Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="{{ asset('images/logo2.png') }}" type="image/x-icon">
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script>
