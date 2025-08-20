@@ -18,6 +18,10 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
+Route::get('/forgot-password', function () {
+    return view('auth/forgot');
+});
+
 // Protected Routes (authenticated users only)
 Route::middleware('auth')->group(function () {
 
