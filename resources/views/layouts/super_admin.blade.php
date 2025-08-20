@@ -37,12 +37,13 @@
 <body class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 text-slate-800 font-sans antialiased">
 
   {{-- Mobile top bar --}}
-  <header class="lg:hidden sticky top-0 z-50 flex items-center justify-between bg-gradient-to-r from-primary-500 to-primary-600 text-white px-4 py-4 shadow-lg backdrop-blur-lg">
+  <header class="lg:hidden sticky top-0 z-50 flex items-center justify-between bg-[#343434] text-white px-4 py-4 shadow-lg backdrop-blur-lg">
     <div class="flex items-center gap-3 font-bold">
-      <div class="flex items-center justify-center h-10 w-10 rounded-xl bg-white text-primary-600 font-extrabold shadow-lg">
+      {{-- <div class="flex items-center justify-center h-10 w-10 rounded-xl bg-white text-primary-600 font-extrabold shadow-lg">
         <span class="text-lg">T</span>
       </div>
-      <span class="text-lg font-semibold">TripMe Admin</span>
+      <span class="text-lg font-semibold">TripMe Admin</span> --}}
+       <img src="{{ asset('images/logo.png') }}" class="w-auto h-12" alt="logo">
     </div>
     <button id="sidebarToggle" class="flex items-center justify-center h-10 w-10 rounded-lg bg-white/20 hover:bg-white/30 active:bg-white/40 transition-all duration-200">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,7 +173,7 @@
       {{-- Main Content --}}
       <main class="flex-1 lg:overflow-hidden mx-5">
         <div id="pageMain" class="min-h-screen opacity-0 translate-y-2 transition-all duration-500 ease-out">
-          <div class="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
+          <div class="p-4 sm:p-6 lg:p-8 w-full mx-auto lg:ml-5 mt-2 lg:mt-0">
             @yield('content')
           </div>
         </div>
