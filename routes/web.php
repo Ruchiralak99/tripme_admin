@@ -69,6 +69,12 @@ Route::middleware('auth')->group(function () {
 
         // Promo Code Routes
         Route::get('/promo-codes', [SuperAdminController::class, 'promoCodes'])->name('promo_codes');
+        Route::get('/promo-codes/create', [SuperAdminController::class, 'createPromoCode'])->name('promo_codes.create');
+        Route::post('/promo-codes', [SuperAdminController::class, 'storePromoCode'])->name('promo_codes.store');
+        Route::get('/promo-codes/{id}', [SuperAdminController::class, 'viewPromoCode'])->name('promo_codes.view');
+        Route::get('/promo-codes/{id}/edit', [SuperAdminController::class, 'editPromoCode'])->name('promo_codes.edit');
+        Route::put('/promo-codes/{id}', [SuperAdminController::class, 'updatePromoCode'])->name('promo_codes.update');
+        Route::delete('/promo-codes/{id}', [SuperAdminController::class, 'deletePromoCode'])->name('promo_codes.delete');
 
         // Booking management
 

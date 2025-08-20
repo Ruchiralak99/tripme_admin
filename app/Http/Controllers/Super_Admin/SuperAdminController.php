@@ -922,4 +922,100 @@ class SuperAdminController extends Controller
         return view('super_admin.promocodes.promo_code', compact('promoCodes'));
     }
 
+    public function createPromoCode()
+    {
+        return view('super_admin.promocodes.create');
+    }
+
+    public function storePromoCode(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string|max:50|unique:promo_codes,code',
+            'description' => 'required|string|max:255',
+            'author' => 'nullable|string|max:255',
+            'discount_type' => 'required|in:percentage,fixed',
+            'discount_value' => 'required|numeric|min:0',
+            'minimum_amount' => 'nullable|numeric|min:0',
+            'maximum_discount' => 'nullable|numeric|min:0',
+            'usage_limit' => 'nullable|integer|min:1',
+            'valid_from' => 'required|date|after_or_equal:today',
+            'valid_until' => 'required|date|after:valid_from',
+            'status' => 'required|in:active,inactive',
+        ]);
+
+        PromoCode::create([
+            'code' => strtoupper($request->code),
+            'description' => $request->description,
+            'author' => $request->author,
+            'discount_type' => $request->discount_type,
+            'discount_value' => $request->discount_value,
+            'minimum_amount' => $request->minimum_amount,
+            'maximum_discount' => $request->maximum_discount,
+            'usage_limit' => $request->usage_limit,
+            'valid_from' => $request->valid_from,
+            'valid_until' => $request->valid_until,
+            'status' => $request->status,
+        ]);
+
+        return redirect()->route('super_admin.promo_codes')
+                        ->with('success', 'Promo code created successfully!');
+    }
+
+    public function viewPromoCode($id)
+    {
+        $promoCode = PromoCode::findOrFail($id);
+        return view('super_admin.promocodes.view', compact('promoCode'));
+    }
+
+    public function editPromoCode($id)
+    {
+        $promoCode = PromoCode::findOrFail($id);
+        return view('super_admin.promocodes.edit', compact('promoCode'));
+    }
+
+    public function updatePromoCode(Request $request, $id)
+    {
+        $promoCode = PromoCode::findOrFail($id);
+
+        $request->validate([
+            'code' => 'required|string|max:50|unique:promo_codes,code,' . $id,
+            'description' => 'required|string|max:255',
+            'author' => 'nullable|string|max:255',
+            'discount_type' => 'required|in:percentage,fixed',
+            'discount_value' => 'required|numeric|min:0',
+            'minimum_amount' => 'nullable|numeric|min:0',
+            'maximum_discount' => 'nullable|numeric|min:0',
+            'usage_limit' => 'nullable|integer|min:1',
+            'valid_from' => 'required|date',
+            'valid_until' => 'required|date|after:valid_from',
+            'status' => 'required|in:active,inactive',
+        ]);
+
+        $promoCode->update([
+            'code' => strtoupper($request->code),
+            'description' => $request->description,
+            'author' => $request->author,
+            'discount_type' => $request->discount_type,
+            'discount_value' => $request->discount_value,
+            'minimum_amount' => $request->minimum_amount,
+            'maximum_discount' => $request->maximum_discount,
+            'usage_limit' => $request->usage_limit,
+            'valid_from' => $request->valid_from,
+            'valid_until' => $request->valid_until,
+            'status' => $request->status,
+        ]);
+
+        return redirect()->route('super_admin.promo_codes')
+                        ->with('success', 'Promo code updated successfully!');
+    }
+
+    public function deletePromoCode($id)
+    {
+        $promoCode = PromoCode::findOrFail($id);
+        $promoCode->delete();
+
+        return redirect()->route('super_admin.promo_codes')
+                        ->with('success', 'Promo code deleted successfully!');
+    }
+
 }

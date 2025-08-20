@@ -10,6 +10,7 @@ class PromoCode extends Model
     protected $fillable = [
         'code',
         'description',
+        'author',
         'discount_type',
         'discount_value',
         'minimum_amount',
