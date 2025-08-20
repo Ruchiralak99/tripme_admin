@@ -68,6 +68,30 @@
                         </p>
                     </div>
                     <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Start Point</label>
+                        <p class="text-slate-900">
+                            <span class="flex items-center">
+                                <svg class="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                {{ $booking->start_point ?? 'Not specified' }}
+                            </span>
+                        </p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">End Point</label>
+                        <p class="text-slate-900">
+                            <span class="flex items-center">
+                                <svg class="w-4 h-4 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                {{ $booking->end_point ?? 'Not specified' }}
+                            </span>
+                        </p>
+                    </div>
+                    <div>
                         <label class="block text-sm font-medium text-slate-700 mb-1">Booking Date</label>
                         <p class="text-slate-900">{{ $booking->booking_date->format('l, F j, Y') }}</p>
                     </div>

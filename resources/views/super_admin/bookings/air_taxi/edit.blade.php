@@ -104,6 +104,44 @@
                             </div>
 
                             <div>
+                                <label for="start_point" class="block text-sm font-medium text-slate-700 mb-2">
+                                    Start Point *
+                                </label>
+
+                                <input type="text" id="start_point" name="start_point"
+                                    value="{{ old('start_point', $booking->start_point) }}" required
+                                    placeholder="e.g., Colombo Airport, Hotel, etc."
+                                    @class([
+                                        'w-full px-3 py-2 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500',
+                                        'border border-slate-300' => !$errors->has('start_point'),
+                                        'border border-red-500' => $errors->has('start_point'),
+                                    ])>
+
+                                @error('start_point')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="end_point" class="block text-sm font-medium text-slate-700 mb-2">
+                                    End Point *
+                                </label>
+
+                                <input type="text" id="end_point" name="end_point"
+                                    value="{{ old('end_point', $booking->end_point) }}" required
+                                    placeholder="e.g., Kandy, Galle, Hotel, etc."
+                                    @class([
+                                        'w-full px-3 py-2 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500',
+                                        'border border-slate-300' => !$errors->has('end_point'),
+                                        'border border-red-500' => $errors->has('end_point'),
+                                    ])>
+
+                                @error('end_point')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
                                 <label for="aircraft_id"
                                     class="block text-sm font-medium text-slate-700 mb-2">Aircraft</label>
                                 <p class="text-slate-600 text-sm">

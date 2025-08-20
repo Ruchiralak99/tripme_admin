@@ -209,6 +209,24 @@
                   <p class="mt-1 text-xs text-gray-500">Describe the purpose of your helicopter trip</p>
                 </div>
                 <div>
+                  <label for="start_point" class="block text-sm font-medium text-gray-700 mb-2">Start Point *</label>
+                  <input type="text" id="start_point" name="start_point" required
+                         placeholder="e.g., Colombo Airport, Hotel, etc."
+                         class="block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
+                  <p class="mt-1 text-xs text-gray-500">Where your journey begins</p>
+                </div>
+                <div>
+                  <label for="end_point" class="block text-sm font-medium text-gray-700 mb-2">End Point *</label>
+                  <input type="text" id="end_point" name="end_point" required
+                         placeholder="e.g., Kandy, Galle, Hotel, etc."
+                         class="block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm">
+                  <p class="mt-1 text-xs text-gray-500">Your destination</p>
+                </div>
+              </div>
+
+              {{-- Date and Time Row --}}
+              <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 mt-4">
+                <div>
                   <label for="booking_date" class="block text-sm font-medium text-gray-700 mb-2">Date *</label>
                   <input type="date" id="booking_date" name="booking_date" required
                          min="{{ now()->addDays(3)->format('Y-m-d') }}"

@@ -13,6 +13,8 @@ class AirTaxiBooking extends Model
         'full_name',
         'phone_number',
         'tour_type',
+        'start_point',
+        'end_point',
         'booking_date',
         'booking_time',
         'passengers',
