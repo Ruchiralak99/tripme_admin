@@ -54,11 +54,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/packages/rides/cities/store', [SuperAdminController::class, 'rideCitiesStore'])->name('packages.rides_cities_store');
         Route::delete('/packages/rides/cities/{city}', [SuperAdminController::class, 'rideCitiesDelete'])->name('packages.rides_cities_delete');
 
-        // Ride Booking Routes
-        Route::get('/packages/rides/{ride}/book', [SuperAdminController::class, 'showBookingForm'])->name('packages.rides.book');
-        Route::post('/packages/rides/book/store', [SuperAdminController::class, 'storeRideBooking'])->name('packages.rides.book.store');
-        Route::post('/packages/rides/validate-promo', [SuperAdminController::class, 'validatePromoCode'])->name('packages.rides.validate_promo');
-
         // Tours Routes
         Route::get('/packages/tours', [SuperAdminController::class, 'tours'])->name('packages.tours');
 
@@ -72,13 +67,23 @@ Route::middleware('auth')->group(function () {
         Route::delete('/aircrafts/{id}', [SuperAdminController::class, 'deleteAircraft'])->name('aircrafts.delete');
 
 
+        // Promo Code Routes
+        Route::get('/promo-codes', [SuperAdminController::class, 'promoCodes'])->name('promo_codes');
+
         // Booking management
+
+        // Air taxi Booking Routes
         Route::get('/bookings/air-taxi-bookings', [SuperAdminController::class, 'showAirTaxiBookings'])->name('bookings.air_taxi.bookings');
         Route::get('/bookings/air-taxi-bookings/{id}/view', [SuperAdminController::class, 'viewAirTaxiBooking'])->name('bookings.air_taxi.view');
         Route::get('/bookings/air-taxi-bookings/{id}/edit', [SuperAdminController::class, 'editAirTaxiBooking'])->name('bookings.air_taxi.edit');
         Route::put('/bookings/air-taxi-bookings/{id}', [SuperAdminController::class, 'updateAirTaxiBooking'])->name('bookings.air_taxi.update');
         Route::patch('/bookings/air-taxi-bookings/{id}/status', [SuperAdminController::class, 'updateAirTaxiBookingStatus'])->name('bookings.air_taxi.status');
         Route::delete('/bookings/air-taxi-bookings/{id}', [SuperAdminController::class, 'deleteAirTaxiBooking'])->name('bookings.air_taxi.delete');
+
+        // Ride Booking Routes
+        Route::get('/packages/rides/{ride}/book', [SuperAdminController::class, 'showBookingForm'])->name('packages.rides.book');
+        Route::post('/packages/rides/book/store', [SuperAdminController::class, 'storeRideBooking'])->name('packages.rides.book.store');
+        Route::post('/packages/rides/validate-promo', [SuperAdminController::class, 'validatePromoCode'])->name('packages.rides.validate_promo');
     });
 
 

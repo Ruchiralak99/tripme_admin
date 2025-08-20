@@ -906,4 +906,12 @@ class SuperAdminController extends Controller
                         ->with('success', 'Booking deleted successfully!');
     }
 
+    // Promo Code Routes
+
+    public function promoCodes()
+    {
+        $promoCodes = PromoCode::latest()->paginate(15);
+        return view('super_admin.promocodes.promo_code', compact('promoCodes'));
+    }
+
 }
