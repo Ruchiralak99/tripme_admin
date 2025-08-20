@@ -159,9 +159,20 @@
         <div class="text-lg font-bold text-primary-600">
           Rs. {{ number_format($category->regular_value, 2) }}
         </div>
-        <div class="flex items-center gap-2">
-          <span class="w-2 h-2 bg-{{ $category->status === 'active' ? 'green' : 'red' }}-500 rounded-full"></span>
-          <span class="text-sm text-slate-600 capitalize">{{ $category->status }}</span>
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 bg-{{ $category->status === 'active' ? 'green' : 'red' }}-500 rounded-full"></span>
+            <span class="text-sm text-slate-600 capitalize">{{ $category->status }}</span>
+          </div>
+          @if($category->status === 'active')
+            <a href="{{ route('super_admin.packages.rides.book', $category->id) }}"
+               class="inline-flex items-center px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors duration-200 text-sm font-medium">
+              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v11a2 2 0 002 2h2m0-13h10a2 2 0 012 2v11a2 2 0 01-2 2H9m0-13v13"></path>
+              </svg>
+              Book Now
+            </a>
+          @endif
         </div>
       </div>
     </div>

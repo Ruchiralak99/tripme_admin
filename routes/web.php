@@ -54,6 +54,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/packages/rides/cities/store', [SuperAdminController::class, 'rideCitiesStore'])->name('packages.rides_cities_store');
         Route::delete('/packages/rides/cities/{city}', [SuperAdminController::class, 'rideCitiesDelete'])->name('packages.rides_cities_delete');
 
+        // Ride Booking Routes
+        Route::get('/packages/rides/{ride}/book', [SuperAdminController::class, 'showBookingForm'])->name('packages.rides.book');
+        Route::post('/packages/rides/book/store', [SuperAdminController::class, 'storeRideBooking'])->name('packages.rides.book.store');
+        Route::post('/packages/rides/validate-promo', [SuperAdminController::class, 'validatePromoCode'])->name('packages.rides.validate_promo');
+
         // Tours Routes
         Route::get('/packages/tours', [SuperAdminController::class, 'tours'])->name('packages.tours');
 
