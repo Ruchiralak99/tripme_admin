@@ -1020,4 +1020,102 @@ class SuperAdminController extends Controller
                         ->with('success', 'Promo code deleted successfully!');
     }
 
+    public function showRideBookings(Request $request)
+    {
+        $query = RideBooking::with(['ride', 'city', 'user', 'payments']);
+
+        // Search functionality
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('booking_reference', 'like', "%{$search}%")
+                  ->orWhere('full_name', 'like', "%{$search}%")
+                  ->orWhere('phone_number', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhereHas('ride', function($rideQuery) use ($search) {
+                      $rideQuery->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // Status filter
+        if ($request->has('status') && $request->status) {
+            $query->where('status', $request->status);
+        }
+
+        // Payment type filter
+        if ($request->has('payment_type') && $request->payment_type) {
+            $query->where('payment_type', $request->payment_type);
+        }
+
+        // Promo code filter
+        if ($request->has('promo_filter') && $request->promo_filter) {
+            if ($request->promo_filter === 'with_promo') {
+                $query->whereNotNull('promo_code');
+            } elseif ($request->promo_filter === 'without_promo') {
+                $query->whereNull('promo_code');
+            }
+        }
+
+        // Date range filter
+        if ($request->has('date_from') && $request->date_from) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+        if ($request->has('date_to') && $request->date_to) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $rideBookings = $query->orderBy('created_at', 'desc')->paginate(15);
+
+        // Get filter options
+        $statuses = ['pending', 'confirmed', 'cancelled', 'completed'];
+        $paymentTypes = ['tentative', 'partial', 'full'];
+
+        return view('super_admin.bookings.rides.ride_bookings', compact('rideBookings', 'statuses', 'paymentTypes'));
+    }
+
+    public function showRideBooking($id)
+    {
+        $booking = RideBooking::with(['ride', 'city', 'user', 'payments.promoCode'])->findOrFail($id);
+        return view('super_admin.bookings.rides.view', compact('booking'));
+    }
+
+    public function editRideBooking($id)
+    {
+        $booking = RideBooking::with(['ride', 'city'])->findOrFail($id);
+        $rides = Ride::where('status', 'active')->get();
+        $cities = RideCity::all();
+        return view('super_admin.bookings.rides.edit', compact('booking', 'rides', 'cities'));
+    }
+
+    public function updateRideBooking(Request $request, $id)
+    {
+        $booking = RideBooking::findOrFail($id);
+
+        $validated = $request->validate([
+            'status' => 'required|in:pending,confirmed,cancelled,completed',
+            'confirmed_date' => 'nullable|date',
+            'additional_notes' => 'nullable|string'
+        ]);
+
+        $booking->update($validated);
+
+        return redirect()->route('super_admin.bookings.rides.bookings')
+                        ->with('success', 'Booking updated successfully!');
+    }
+
+    public function destroyRideBooking($id)
+    {
+        $booking = RideBooking::findOrFail($id);
+
+        // Delete associated payments first
+        $booking->payments()->delete();
+
+        // Delete the booking
+        $booking->delete();
+
+        return redirect()->route('super_admin.bookings.rides.bookings')
+                        ->with('success', 'Booking deleted successfully!');
+    }
+
 }

@@ -41,6 +41,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/packages/air-taxi/book', [SuperAdminController::class, 'storeAirTaxiBooking'])->name('packages.air_taxi.book');
         Route::get('/packages/air-taxi/aircraft/{id}', [SuperAdminController::class, 'getAircraftDetails'])->name('packages.air_taxi.aircraft_details');
 
+         // Ride Routes
+        Route::get('/packages/rides/{ride}/book', [SuperAdminController::class, 'showBookingForm'])->name('packages.rides.book');
+        Route::post('/packages/rides/book/store', [SuperAdminController::class, 'storeRideBooking'])->name('packages.rides.book.store');
+        Route::post('/packages/rides/validate-promo', [SuperAdminController::class, 'validatePromoCode'])->name('packages.rides.validate_promo');
+
         // Rides Routes (with full CRUD)
         Route::get('/packages/rides', [SuperAdminController::class, 'rides'])->name('packages.rides.rides');
         Route::get('/packages/rides/create', [SuperAdminController::class, 'createRideCategory'])->name('packages.rides_create');
@@ -87,9 +92,12 @@ Route::middleware('auth')->group(function () {
         Route::delete('/bookings/air-taxi-bookings/{id}', [SuperAdminController::class, 'deleteAirTaxiBooking'])->name('bookings.air_taxi.delete');
 
         // Ride Booking Routes
-        Route::get('/packages/rides/{ride}/book', [SuperAdminController::class, 'showBookingForm'])->name('packages.rides.book');
-        Route::post('/packages/rides/book/store', [SuperAdminController::class, 'storeRideBooking'])->name('packages.rides.book.store');
-        Route::post('/packages/rides/validate-promo', [SuperAdminController::class, 'validatePromoCode'])->name('packages.rides.validate_promo');
+        Route::get('/bookings/rides', [SuperAdminController::class, 'showRideBookings'])->name('bookings.rides.bookings');
+        Route::get('/bookings/rides/{id}', [SuperAdminController::class, 'showRideBooking'])->name('bookings.rides.view');
+        Route::get('/bookings/rides/{id}/edit', [SuperAdminController::class, 'editRideBooking'])->name('bookings.rides.edit');
+        Route::put('/bookings/rides/{id}', [SuperAdminController::class, 'updateRideBooking'])->name('bookings.rides.update');
+        Route::delete('/bookings/rides/{id}', [SuperAdminController::class, 'destroyRideBooking'])->name('bookings.rides.destroy');
+
     });
 
 
