@@ -343,7 +343,7 @@ class SuperAdminController extends Controller
             'status' => $validated['status']
         ]);
 
-        return redirect()->route('super_admin.helitours.packages.rides.rides')
+        return redirect()->route('super_admin.packages.rides.rides')
                          ->with('success', 'Ride category created successfully!');
     }
 
@@ -406,7 +406,7 @@ class SuperAdminController extends Controller
             'status' => $validated['status']
         ]);
 
-        return redirect()->route('super_admin.helitours.packages.rides.rides')
+        return redirect()->route('super_admin.packages.rides.rides')
                          ->with('success', 'Ride category updated successfully!');
     }
 
@@ -422,7 +422,7 @@ class SuperAdminController extends Controller
 
         $ride->delete();
 
-        return redirect()->route('super_admin.helitours.packages.rides.rides')
+        return redirect()->route('super_admin.packages.rides.rides')
                          ->with('success', 'Ride category deleted successfully!');
     }
 
@@ -451,7 +451,7 @@ class SuperAdminController extends Controller
             'status' => $request->status ?? 'active'
         ]);
 
-        return redirect()->route('super_admin.helitours.packages.rides.cities')
+        return redirect()->route('super_admin.packages.rides.cities')
                          ->with('success', 'City added successfully!');
     }
 
@@ -459,7 +459,7 @@ class SuperAdminController extends Controller
     {
         $city->delete();
 
-        return redirect()->route('super_admin.helitours.packages.rides.cities')
+        return redirect()->route('super_admin.packages.rides.cities')
                          ->with('success', 'City deleted successfully!');
     }
 
@@ -629,7 +629,7 @@ class SuperAdminController extends Controller
             // Send email notification (you can implement this later)
             $this->sendBookingConfirmationEmail($booking);
 
-            return redirect()->route('super_admin.helitours.packages.rides.rides')
+            return redirect()->route('super_admin.packages.rides.rides')
                            ->with('success', 'Booking created successfully! Booking Reference: ' . $booking->booking_reference);
 
         } catch (\Exception $e) {
@@ -728,7 +728,7 @@ class SuperAdminController extends Controller
             'status' => $validated['status']
         ]);
 
-        return redirect()->route('super_admin.helitours.aircrafts')
+        return redirect()->route('super_admin.aircrafts')
                          ->with('success', 'Aircraft created successfully!');
     }
 
@@ -768,7 +768,7 @@ class SuperAdminController extends Controller
             'status' => $validated['status']
         ]);
 
-        return redirect()->route('super_admin.helitours.aircrafts')
+        return redirect()->route('super_admin.aircrafts')
                          ->with('success', 'Aircraft updated successfully!');
     }
 
@@ -795,7 +795,7 @@ class SuperAdminController extends Controller
 
         $aircraft->delete();
 
-        return redirect()->route('super_admin.helitours.aircrafts')
+        return redirect()->route('super_admin.aircrafts')
                          ->with('success', 'Aircraft deleted successfully!');
     }
 
@@ -882,7 +882,7 @@ class SuperAdminController extends Controller
             'confirmed_at' => $request->status === 'confirmed' ? now() : null
         ]);
 
-        return redirect()->route('super_admin.helitours.bookings.air_taxi.bookings')
+        return redirect()->route('super_admin.bookings.air_taxi.bookings')
                         ->with('success', 'Booking updated successfully!');
     }
 
@@ -912,7 +912,7 @@ class SuperAdminController extends Controller
         $booking = AirTaxiBooking::findOrFail($id);
         $booking->delete();
 
-        return redirect()->route('super_admin.helitours.bookings.air_taxi.bookings')
+        return redirect()->route('super_admin.bookings.air_taxi.bookings')
                         ->with('success', 'Booking deleted successfully!');
     }
 
@@ -959,7 +959,7 @@ class SuperAdminController extends Controller
             'status' => $request->status,
         ]);
 
-        return redirect()->route('super_admin.helitours.promo_codes')
+        return redirect()->route('super_admin.promo_codes')
                         ->with('success', 'Promo code created successfully!');
     }
 
@@ -1007,7 +1007,7 @@ class SuperAdminController extends Controller
             'status' => $request->status,
         ]);
 
-        return redirect()->route('super_admin.helitours.promo_codes')
+        return redirect()->route('super_admin.promo_codes')
                         ->with('success', 'Promo code updated successfully!');
     }
 
@@ -1016,7 +1016,7 @@ class SuperAdminController extends Controller
         $promoCode = PromoCode::findOrFail($id);
         $promoCode->delete();
 
-        return redirect()->route('super_admin.helitours.promo_codes')
+        return redirect()->route('super_admin.promo_codes')
                         ->with('success', 'Promo code deleted successfully!');
     }
 
@@ -1100,7 +1100,7 @@ class SuperAdminController extends Controller
 
         $booking->update($validated);
 
-        return redirect()->route('super_admin.helitours.bookings.rides.bookings')
+        return redirect()->route('super_admin.bookings.rides.bookings')
                         ->with('success', 'Booking updated successfully!');
     }
 
@@ -1114,7 +1114,7 @@ class SuperAdminController extends Controller
         // Delete the booking
         $booking->delete();
 
-        return redirect()->route('super_admin.helitours.bookings.rides.bookings')
+        return redirect()->route('super_admin.bookings.rides.bookings')
                         ->with('success', 'Booking deleted successfully!');
     }
 
