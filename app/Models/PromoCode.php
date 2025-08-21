@@ -73,5 +73,10 @@ class PromoCode extends Model
         $this->increment('used_count');
     }
 
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'promo_code_id');
+    }
+
     protected $table = 'promo_codes'; // Ensure the table name is set correctly
 }

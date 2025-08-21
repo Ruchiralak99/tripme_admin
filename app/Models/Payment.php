@@ -19,12 +19,15 @@ class Payment extends Model
         'status',
         'admin_notes',
         'verified_at',
-        'verified_by'
+        'verified_by',
+        'has_promo_code',
+        'promo_code_id'
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
-        'verified_at' => 'datetime'
+        'verified_at' => 'datetime',
+        'has_promo_code' => 'boolean'
     ];
 
     protected static function boot()
@@ -46,6 +49,11 @@ class Payment extends Model
     public function verifiedBy()
     {
         return $this->belongsTo(User::class, 'verified_by');
+    }
+
+    public function promoCode()
+    {
+        return $this->belongsTo(PromoCode::class, 'promo_code_id');
     }
 
     public function getStatusColorAttribute()

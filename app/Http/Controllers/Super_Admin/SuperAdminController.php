@@ -613,7 +613,9 @@ class SuperAdminController extends Controller
                     'payment_type' => $request->payment_type,
                     'reference_number' => $request->reference_number,
                     'payment_slip_path' => $paymentSlipPath,
-                    'status' => 'pending'
+                    'status' => 'pending',
+                    'has_promo_code' => $promoCode ? true : false,
+                    'promo_code_id' => $promoCode ? $promoCode->id : null
                 ]);
             }
 
