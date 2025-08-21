@@ -194,7 +194,7 @@ class SuperAdminController extends Controller
 
     public function showPackages()
     {
-        return view('super_admin.packages.packages');
+        return view('super_admin.helitours.packages.packages');
     }
 
     // Air Taxi Package Management
@@ -239,7 +239,7 @@ class SuperAdminController extends Controller
             ]
         ];
 
-        return view('super_admin.packages.air_taxi.air_taxi', compact('airTaxiServices', 'aircrafts'));
+        return view('super_admin.helitours.packages.air_taxi.air_taxi', compact('airTaxiServices', 'aircrafts'));
     }
 
     public function storeAirTaxiBooking(Request $request)
@@ -288,13 +288,13 @@ class SuperAdminController extends Controller
     public function rides()
     {
         $ridesCategories = Ride::orderBy('created_at', 'desc')->get();
-        return view('super_admin.packages.rides.rides', compact('ridesCategories'));
+        return view('super_admin.helitours.packages.rides.rides', compact('ridesCategories'));
     }
 
     // Create new ride category
     public function createRideCategory()
     {
-        return view('super_admin.packages.rides.rides_create');
+        return view('super_admin.helitours.packages.rides.rides_create');
     }
 
     // Store ride category
@@ -343,7 +343,7 @@ class SuperAdminController extends Controller
             'status' => $validated['status']
         ]);
 
-        return redirect()->route('super_admin.packages.rides.rides')
+        return redirect()->route('super_admin.helitours.packages.rides.rides')
                          ->with('success', 'Ride category created successfully!');
     }
 
@@ -351,7 +351,7 @@ class SuperAdminController extends Controller
     public function editRideCategory($id)
     {
         $ride = Ride::findOrFail($id);
-        return view('super_admin.packages.rides.rides_edit', compact('ride'));
+        return view('super_admin.helitours.packages.rides.rides_edit', compact('ride'));
     }
 
     // Update ride category
@@ -406,7 +406,7 @@ class SuperAdminController extends Controller
             'status' => $validated['status']
         ]);
 
-        return redirect()->route('super_admin.packages.rides.rides')
+        return redirect()->route('super_admin.helitours.packages.rides.rides')
                          ->with('success', 'Ride category updated successfully!');
     }
 
@@ -422,7 +422,7 @@ class SuperAdminController extends Controller
 
         $ride->delete();
 
-        return redirect()->route('super_admin.packages.rides.rides')
+        return redirect()->route('super_admin.helitours.packages.rides.rides')
                          ->with('success', 'Ride category deleted successfully!');
     }
 
@@ -430,7 +430,7 @@ class SuperAdminController extends Controller
     public function rideCities()
     {
         $cities = RideCity::orderBy('created_at', 'desc')->get();
-        return view('super_admin.packages.rides.cities', compact('cities'));
+        return view('super_admin.helitours.packages.rides.cities', compact('cities'));
     }
 
     public function rideCitiesStore(Request $request)
@@ -451,7 +451,7 @@ class SuperAdminController extends Controller
             'status' => $request->status ?? 'active'
         ]);
 
-        return redirect()->route('super_admin.packages.rides.cities')
+        return redirect()->route('super_admin.helitours.packages.rides.cities')
                          ->with('success', 'City added successfully!');
     }
 
@@ -459,7 +459,7 @@ class SuperAdminController extends Controller
     {
         $city->delete();
 
-        return redirect()->route('super_admin.packages.rides.cities')
+        return redirect()->route('super_admin.helitours.packages.rides.cities')
                          ->with('success', 'City deleted successfully!');
     }
 
@@ -467,7 +467,7 @@ class SuperAdminController extends Controller
     public function showBookingForm(Ride $ride)
     {
         $cities = RideCity::where('status', 'active')->orderBy('name')->get();
-        return view('super_admin.packages.rides.book', compact('ride', 'cities'));
+        return view('super_admin.helitours.packages.rides.book', compact('ride', 'cities'));
     }
 
     public function validatePromoCode(Request $request)
@@ -629,7 +629,7 @@ class SuperAdminController extends Controller
             // Send email notification (you can implement this later)
             $this->sendBookingConfirmationEmail($booking);
 
-            return redirect()->route('super_admin.packages.rides.rides')
+            return redirect()->route('super_admin.helitours.packages.rides.rides')
                            ->with('success', 'Booking created successfully! Booking Reference: ' . $booking->booking_reference);
 
         } catch (\Exception $e) {
@@ -686,19 +686,19 @@ class SuperAdminController extends Controller
             ]
         ];
 
-        return view('super_admin.packages.tours.tours', compact('tourPackages'));
+        return view('super_admin.helitours.packages.tours.tours', compact('tourPackages'));
     }
 
     public function showAirCrafts()
     {
         $aircrafts = Aircraft::latest()->get();
-        return view('super_admin.aircrafts.aircrafts', compact('aircrafts'));
+        return view('super_admin.helitours.aircrafts.aircrafts', compact('aircrafts'));
     }
 
     // Create aircraft form
     public function createAircraft()
     {
-        return view('super_admin.aircrafts.aircrafts_create');
+        return view('super_admin.helitours.aircrafts.aircrafts_create');
     }
 
     // Store aircraft
@@ -728,7 +728,7 @@ class SuperAdminController extends Controller
             'status' => $validated['status']
         ]);
 
-        return redirect()->route('super_admin.aircrafts')
+        return redirect()->route('super_admin.helitours.aircrafts')
                          ->with('success', 'Aircraft created successfully!');
     }
 
@@ -736,7 +736,7 @@ class SuperAdminController extends Controller
     public function editAircraft($id)
     {
         $aircraft = Aircraft::findOrFail($id);
-        return view('super_admin.aircrafts.aircrafts_edit', compact('aircraft'));
+        return view('super_admin.helitours.aircrafts.aircrafts_edit', compact('aircraft'));
     }
 
     // Update aircraft
@@ -768,7 +768,7 @@ class SuperAdminController extends Controller
             'status' => $validated['status']
         ]);
 
-        return redirect()->route('super_admin.aircrafts')
+        return redirect()->route('super_admin.helitours.aircrafts')
                          ->with('success', 'Aircraft updated successfully!');
     }
 
@@ -776,7 +776,7 @@ class SuperAdminController extends Controller
     public function viewAircraft($id)
     {
         $aircraft = Aircraft::findOrFail($id);
-        return view('super_admin.aircrafts.aircrafts_view', compact('aircraft'));
+        return view('super_admin.helitours.aircrafts.aircrafts_view', compact('aircraft'));
     }
 
     // Delete aircraft
@@ -795,7 +795,7 @@ class SuperAdminController extends Controller
 
         $aircraft->delete();
 
-        return redirect()->route('super_admin.aircrafts')
+        return redirect()->route('super_admin.helitours.aircrafts')
                          ->with('success', 'Aircraft deleted successfully!');
     }
 
@@ -833,20 +833,20 @@ class SuperAdminController extends Controller
         }
 
         $airTaxiBookings = $query->latest()->paginate(15);
-        return view('super_admin.bookings.air_taxi.air_taxi_bookings', compact('airTaxiBookings'));
+        return view('super_admin.helitours.bookings.air_taxi.air_taxi_bookings', compact('airTaxiBookings'));
     }
 
     public function viewAirTaxiBooking($id)
     {
         $booking = AirTaxiBooking::with(['user', 'aircraft'])->findOrFail($id);
-        return view('super_admin.bookings.air_taxi.view', compact('booking'));
+        return view('super_admin.helitours.bookings.air_taxi.view', compact('booking'));
     }
 
     public function editAirTaxiBooking($id)
     {
         $booking = AirTaxiBooking::with(['user', 'aircraft'])->findOrFail($id);
         $aircrafts = Aircraft::where('status', true)->get();
-        return view('super_admin.bookings.air_taxi.edit', compact('booking', 'aircrafts'));
+        return view('super_admin.helitours.bookings.air_taxi.edit', compact('booking', 'aircrafts'));
     }
 
     public function updateAirTaxiBooking(Request $request, $id)
@@ -882,7 +882,7 @@ class SuperAdminController extends Controller
             'confirmed_at' => $request->status === 'confirmed' ? now() : null
         ]);
 
-        return redirect()->route('super_admin.bookings.air_taxi.bookings')
+        return redirect()->route('super_admin.helitours.bookings.air_taxi.bookings')
                         ->with('success', 'Booking updated successfully!');
     }
 
@@ -912,7 +912,7 @@ class SuperAdminController extends Controller
         $booking = AirTaxiBooking::findOrFail($id);
         $booking->delete();
 
-        return redirect()->route('super_admin.bookings.air_taxi.bookings')
+        return redirect()->route('super_admin.helitours.bookings.air_taxi.bookings')
                         ->with('success', 'Booking deleted successfully!');
     }
 
@@ -921,12 +921,12 @@ class SuperAdminController extends Controller
     public function promoCodes()
     {
         $promoCodes = PromoCode::latest()->paginate(15);
-        return view('super_admin.promocodes.promo_code', compact('promoCodes'));
+        return view('super_admin.helitours.promocodes.promo_code', compact('promoCodes'));
     }
 
     public function createPromoCode()
     {
-        return view('super_admin.promocodes.create');
+        return view('super_admin.helitours.promocodes.create');
     }
 
     public function storePromoCode(Request $request)
@@ -959,20 +959,20 @@ class SuperAdminController extends Controller
             'status' => $request->status,
         ]);
 
-        return redirect()->route('super_admin.promo_codes')
+        return redirect()->route('super_admin.helitours.promo_codes')
                         ->with('success', 'Promo code created successfully!');
     }
 
     public function viewPromoCode($id)
     {
         $promoCode = PromoCode::findOrFail($id);
-        return view('super_admin.promocodes.view', compact('promoCode'));
+        return view('super_admin.helitours.promocodes.view', compact('promoCode'));
     }
 
     public function editPromoCode($id)
     {
         $promoCode = PromoCode::findOrFail($id);
-        return view('super_admin.promocodes.edit', compact('promoCode'));
+        return view('super_admin.helitours.promocodes.edit', compact('promoCode'));
     }
 
     public function updatePromoCode(Request $request, $id)
@@ -1007,7 +1007,7 @@ class SuperAdminController extends Controller
             'status' => $request->status,
         ]);
 
-        return redirect()->route('super_admin.promo_codes')
+        return redirect()->route('super_admin.helitours.promo_codes')
                         ->with('success', 'Promo code updated successfully!');
     }
 
@@ -1016,7 +1016,7 @@ class SuperAdminController extends Controller
         $promoCode = PromoCode::findOrFail($id);
         $promoCode->delete();
 
-        return redirect()->route('super_admin.promo_codes')
+        return redirect()->route('super_admin.helitours.promo_codes')
                         ->with('success', 'Promo code deleted successfully!');
     }
 
@@ -1071,13 +1071,13 @@ class SuperAdminController extends Controller
         $statuses = ['pending', 'confirmed', 'cancelled', 'completed'];
         $paymentTypes = ['tentative', 'partial', 'full'];
 
-        return view('super_admin.bookings.rides.ride_bookings', compact('rideBookings', 'statuses', 'paymentTypes'));
+        return view('super_admin.helitours.bookings.rides.ride_bookings', compact('rideBookings', 'statuses', 'paymentTypes'));
     }
 
     public function showRideBooking($id)
     {
         $booking = RideBooking::with(['ride', 'city', 'user', 'payments.promoCode'])->findOrFail($id);
-        return view('super_admin.bookings.rides.view', compact('booking'));
+        return view('super_admin.helitours.bookings.rides.view', compact('booking'));
     }
 
     public function editRideBooking($id)
@@ -1085,7 +1085,7 @@ class SuperAdminController extends Controller
         $booking = RideBooking::with(['ride', 'city'])->findOrFail($id);
         $rides = Ride::where('status', 'active')->get();
         $cities = RideCity::all();
-        return view('super_admin.bookings.rides.edit', compact('booking', 'rides', 'cities'));
+        return view('super_admin.helitours.bookings.rides.edit', compact('booking', 'rides', 'cities'));
     }
 
     public function updateRideBooking(Request $request, $id)
@@ -1100,7 +1100,7 @@ class SuperAdminController extends Controller
 
         $booking->update($validated);
 
-        return redirect()->route('super_admin.bookings.rides.bookings')
+        return redirect()->route('super_admin.helitours.bookings.rides.bookings')
                         ->with('success', 'Booking updated successfully!');
     }
 
@@ -1114,7 +1114,7 @@ class SuperAdminController extends Controller
         // Delete the booking
         $booking->delete();
 
-        return redirect()->route('super_admin.bookings.rides.bookings')
+        return redirect()->route('super_admin.helitours.bookings.rides.bookings')
                         ->with('success', 'Booking deleted successfully!');
     }
 

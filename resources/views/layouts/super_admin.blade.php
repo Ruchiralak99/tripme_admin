@@ -97,7 +97,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M9 5v.01M15 5v.01"></path>
                 </svg>
               </div>
-              <span class="font-medium">Package Management</span>
+              <span class="font-medium">HeliTours - Package Management</span>
             </a>
 
             <a href="{{ route('super_admin.aircrafts') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200">
@@ -115,7 +115,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                 </svg>
               </div>
-              <span class="font-medium">Promo Code Management</span>
+              <span class="font-medium">HeliTours - Promo Code Management</span>
             </a>
 
             <a href="{{ route('super_admin.bookings.air_taxi.bookings') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200">
@@ -124,7 +124,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                 </svg>
               </div>
-              <span class="font-medium">Air Taxi Bookings</span>
+              <span class="font-medium">HeliTours - Air Taxi Bookings</span>
             </a>
 
             <a href="{{ route('super_admin.bookings.rides.bookings') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200">
@@ -133,7 +133,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                 </svg>
               </div>
-              <span class="font-medium">Ride Bookings</span>
+              <span class="font-medium">HeliTours - Ride Bookings</span>
             </a>
 
             <a href="#" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200">
@@ -142,7 +142,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                 </svg>
               </div>
-              <span class="font-medium">Extra 01</span>
+              <span class="font-medium">HeliTours - Payment Management</span>
             </a>
 
             <div class="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mt-8">Account</div>
