@@ -1123,13 +1123,87 @@ class SuperAdminController extends Controller
         return view('super_admin.helitours.bookings.tours.tour_bookings');
     }
 
-    public function showHeliPaymentPage()
+    public function showHeliPaymentPage(Request $request)
     {
-        $payments = Payment::with(['booking', 'verifiedBy', 'promoCode'])
-                           ->orderBy('created_at', 'desc')
-                           ->paginate(15);
+        $query = Payment::with(['booking', 'verifiedBy', 'promoCode']);
 
-        return view('super_admin.helitours.payments.payments', compact('payments'));
+        // Search functionality
+        if ($request->filled('search')) {
+            $search = $request->get('search');
+            $query->where(function($q) use ($search) {
+                $q->where('payment_reference', 'like', '%' . $search . '%')
+                  ->orWhere('reference_number', 'like', '%' . $search . '%')
+                  ->orWhere('amount', 'like', '%' . $search . '%')
+                  ->orWhereHas('booking', function($bookingQuery) use ($search) {
+                      $bookingQuery->where('booking_reference', 'like', '%' . $search . '%')
+                                   ->orWhere('customer_name', 'like', '%' . $search . '%')
+                                   ->orWhere('customer_phone', 'like', '%' . $search . '%');
+                  });
+            });
+        }
+
+        // Filter by payment status
+        if ($request->filled('status')) {
+            $query->where('status', $request->get('status'));
+        }
+
+        // Filter by payment method
+        if ($request->filled('payment_method')) {
+            $query->where('payment_method', $request->get('payment_method'));
+        }
+
+        // Filter by payment type
+        if ($request->filled('payment_type')) {
+            $query->where('payment_type', $request->get('payment_type'));
+        }
+
+        // Filter by promo code usage
+        if ($request->filled('has_promo_code')) {
+            if ($request->get('has_promo_code') === 'yes') {
+                $query->where('has_promo_code', true);
+            } elseif ($request->get('has_promo_code') === 'no') {
+                $query->where('has_promo_code', false);
+            }
+        }
+
+        // Filter by specific promo code
+        if ($request->filled('promo_code_id')) {
+            $query->where('promo_code_id', $request->get('promo_code_id'));
+        }
+
+        // Date range filter
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->get('date_from'));
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->get('date_to'));
+        }
+
+        // Amount range filter
+        if ($request->filled('amount_min')) {
+            $query->where('amount', '>=', $request->get('amount_min'));
+        }
+
+        if ($request->filled('amount_max')) {
+            $query->where('amount', '<=', $request->get('amount_max'));
+        }
+
+        $payments = $query->orderBy('created_at', 'desc')->paginate(15);
+
+        // Get filter data for dropdowns
+        $promoCodes = PromoCode::where('status', 'active')->orderBy('code')->get();
+        $paymentMethods = ['bank_transfer', 'credit_card', 'cash', 'online'];
+        $paymentTypes = ['full', 'partial'];
+        $statuses = ['pending', 'verified', 'rejected'];
+
+        return view('super_admin.helitours.payments.payments', compact(
+            'payments',
+            'promoCodes',
+            'paymentMethods',
+            'paymentTypes',
+            'statuses'
+        ));
     }
 
     public function viewPaymentDetails($id)
@@ -1174,17 +1248,22 @@ class SuperAdminController extends Controller
 
     public function deletePaymentRecord($id)
     {
-        $payment = Payment::findOrFail($id);
+        try {
+            $payment = Payment::findOrFail($id);
 
-        // Delete payment slip file if exists
-        if ($payment->payment_slip_path && Storage::disk('public')->exists($payment->payment_slip_path)) {
-            Storage::disk('public')->delete($payment->payment_slip_path);
+            // Delete payment slip file if exists
+            if ($payment->payment_slip_path && Storage::disk('public')->exists($payment->payment_slip_path)) {
+                Storage::disk('public')->delete($payment->payment_slip_path);
+            }
+
+            $payment->delete();
+
+            return redirect()->route('super_admin.payments')
+                             ->with('success', 'Payment deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('super_admin.payments')
+                             ->with('error', 'Failed to delete payment. Please try again.');
         }
-
-        $payment->delete();
-
-        return redirect()->route('super_admin.payments')
-                         ->with('success', 'Payment deleted successfully.');
     }
 
 }

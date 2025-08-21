@@ -19,10 +19,220 @@
         </div>
     @endif
 
+    <!-- Error Message -->
+    @if(session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <!-- Search and Filter Section -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <form method="GET" action="{{ route('super_admin.payments') }}" class="space-y-4">
+            <!-- Search Bar -->
+            <div class="flex items-center space-x-4">
+                <div class="flex-1">
+                    <label for="search" class="block text-sm font-medium text-gray-700 mb-2">Search</label>
+                    <div class="relative">
+                        <input type="text"
+                               name="search"
+                               id="search"
+                               value="{{ request('search') }}"
+                               placeholder="Search by payment reference, booking reference, customer name, phone..."
+                               class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex space-x-2 mt-7">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">
+                        Search
+                    </button>
+                    <a href="{{ route('super_admin.payments') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg">
+                        Clear
+                    </a>
+                </div>
+            </div>
+
+            <!-- Filter Options -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Status Filter -->
+                <div>
+                    <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Payment Status</label>
+                    <select name="status" id="status" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">All Statuses</option>
+                        @foreach($statuses as $status)
+                            <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
+                                {{ ucfirst($status) }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Payment Method Filter -->
+                <div>
+                    <label for="payment_method" class="block text-sm font-medium text-gray-700 mb-2">Payment Method</label>
+                    <select name="payment_method" id="payment_method" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">All Methods</option>
+                        @foreach($paymentMethods as $method)
+                            <option value="{{ $method }}" {{ request('payment_method') == $method ? 'selected' : '' }}>
+                                {{ ucwords(str_replace('_', ' ', $method)) }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Payment Type Filter -->
+                <div>
+                    <label for="payment_type" class="block text-sm font-medium text-gray-700 mb-2">Payment Type</label>
+                    <select name="payment_type" id="payment_type" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">All Types</option>
+                        @foreach($paymentTypes as $type)
+                            <option value="{{ $type }}" {{ request('payment_type') == $type ? 'selected' : '' }}>
+                                {{ ucfirst($type) }} Payment
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Promo Code Usage Filter -->
+                <div>
+                    <label for="has_promo_code" class="block text-sm font-medium text-gray-700 mb-2">Promo Code Usage</label>
+                    <select name="has_promo_code" id="has_promo_code" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">All Payments</option>
+                        <option value="yes" {{ request('has_promo_code') == 'yes' ? 'selected' : '' }}>With Promo Code</option>
+                        <option value="no" {{ request('has_promo_code') == 'no' ? 'selected' : '' }}>Without Promo Code</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Advanced Filters -->
+            <div class="border-t pt-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Specific Promo Code Filter -->
+                    <div>
+                        <label for="promo_code_id" class="block text-sm font-medium text-gray-700 mb-2">Specific Promo Code</label>
+                        <select name="promo_code_id" id="promo_code_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">All Promo Codes</option>
+                            @foreach($promoCodes as $promoCode)
+                                <option value="{{ $promoCode->id }}" {{ request('promo_code_id') == $promoCode->id ? 'selected' : '' }}>
+                                    {{ $promoCode->code }} -
+                                    @if($promoCode->discount_type === 'percentage')
+                                        {{ $promoCode->discount_value }}% off
+                                    @else
+                                        LKR {{ number_format($promoCode->discount_value, 2) }} off
+                                    @endif
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Date Range Filters -->
+                    <div>
+                        <label for="date_from" class="block text-sm font-medium text-gray-700 mb-2">Date From</label>
+                        <input type="date"
+                               name="date_from"
+                               id="date_from"
+                               value="{{ request('date_from') }}"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div>
+                        <label for="date_to" class="block text-sm font-medium text-gray-700 mb-2">Date To</label>
+                        <input type="date"
+                               name="date_to"
+                               id="date_to"
+                               value="{{ request('date_to') }}"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <!-- Amount Range Filters -->
+                    <div>
+                        <label for="amount_min" class="block text-sm font-medium text-gray-700 mb-2">Min Amount (LKR)</label>
+                        <input type="number"
+                               name="amount_min"
+                               id="amount_min"
+                               value="{{ request('amount_min') }}"
+                               step="0.01"
+                               min="0"
+                               placeholder="0.00"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+                    <div>
+                        <label for="amount_max" class="block text-sm font-medium text-gray-700 mb-2">Max Amount (LKR)</label>
+                        <input type="number"
+                               name="amount_max"
+                               id="amount_max"
+                               value="{{ request('amount_max') }}"
+                               step="0.01"
+                               min="0"
+                               placeholder="999999.99"
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <!-- Filter Actions -->
+                    <div class="flex items-end space-x-2">
+                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg">
+                            Apply Filters
+                        </button>
+                        <a href="{{ route('super_admin.payments') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg">
+                            Reset All
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
     <!-- Payments Table -->
     <div class="bg-white rounded-lg shadow-md overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-200">
-            <h3 class="text-lg font-medium text-gray-900">Payment Transactions ({{ $payments->total() }} total)</h3>
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-medium text-gray-900">
+                    Payment Transactions
+                    <span class="text-sm text-gray-500">({{ $payments->total() }} total{{ request()->hasAny(['search', 'status', 'payment_method', 'payment_type', 'has_promo_code', 'promo_code_id', 'date_from', 'date_to', 'amount_min', 'amount_max']) ? ', filtered' : '' }})</span>
+                </h3>
+
+                @if(request()->hasAny(['search', 'status', 'payment_method', 'payment_type', 'has_promo_code', 'promo_code_id', 'date_from', 'date_to', 'amount_min', 'amount_max']))
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-gray-600">Active filters:</span>
+                        <div class="flex flex-wrap gap-1">
+                            @if(request('search'))
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    Search: {{ request('search') }}
+                                </span>
+                            @endif
+                            @if(request('status'))
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    Status: {{ ucfirst(request('status')) }}
+                                </span>
+                            @endif
+                            @if(request('payment_method'))
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                    Method: {{ ucwords(str_replace('_', ' ', request('payment_method'))) }}
+                                </span>
+                            @endif
+                            @if(request('payment_type'))
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                    Type: {{ ucfirst(request('payment_type')) }}
+                                </span>
+                            @endif
+                            @if(request('has_promo_code'))
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                    Promo: {{ request('has_promo_code') === 'yes' ? 'With Code' : 'No Code' }}
+                                </span>
+                            @endif
+                        </div>
+                        <a href="{{ route('super_admin.payments') }}" class="text-sm text-red-600 hover:text-red-800">Clear all</a>
+                    </div>
+                @endif
+            </div>
         </div>
 
         @if($payments->count() > 0)
@@ -81,7 +291,7 @@
                                 </td>
 
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">${{ number_format($payment->amount, 2) }}</div>
+                                    <div class="text-sm font-medium text-gray-900">LKR {{ number_format($payment->amount, 2) }}</div>
                                     <div class="text-sm text-gray-500">{{ ucwords(str_replace('_', ' ', $payment->payment_method)) }}</div>
                                     <div class="text-xs text-gray-400">{{ ucfirst($payment->payment_type) }} Payment</div>
                                 </td>
@@ -126,12 +336,20 @@
                                         </a>
 
                                         <!-- Delete Button -->
-                                        <button onclick="deletePayment({{ $payment->id }})"
-                                                class="text-red-600 hover:text-red-900" title="Delete Payment">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                            </svg>
-                                        </button>
+                                        <form method="POST"
+                                              action="{{ route('super_admin.payments.delete', $payment->id) }}"
+                                              style="display: inline-block;"
+                                              onsubmit="return confirm('Are you sure you want to delete this payment? This action cannot be undone.')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                    class="text-red-600 hover:text-red-900"
+                                                    title="Delete Payment">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                </svg>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
@@ -142,7 +360,7 @@
 
             <!-- Pagination -->
             <div class="px-6 py-4 border-t border-gray-200">
-                {{ $payments->links() }}
+                {{ $payments->appends(request()->query())->links() }}
             </div>
         @else
             <div class="text-center py-12">
@@ -160,26 +378,47 @@
 <script>
 function deletePayment(paymentId) {
     if (confirm('Are you sure you want to delete this payment? This action cannot be undone.')) {
+        // Create a form dynamically
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = `/super_admin/payments/${paymentId}`;
+        form.action = '{{ url("super_admin/payments") }}/' + paymentId;
+        form.style.display = 'none';
 
+        // Add CSRF token
         const csrfToken = document.createElement('input');
         csrfToken.type = 'hidden';
         csrfToken.name = '_token';
         csrfToken.value = '{{ csrf_token() }}';
 
+        // Add method override for DELETE
         const methodField = document.createElement('input');
         methodField.type = 'hidden';
         methodField.name = '_method';
         methodField.value = 'DELETE';
 
+        // Append inputs to form
         form.appendChild(csrfToken);
         form.appendChild(methodField);
+
+        // Append form to body and submit
         document.body.appendChild(form);
         form.submit();
     }
 }
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Payment management page loaded');
+
+    // Optional: Auto-submit form when filters change
+    const filterSelects = document.querySelectorAll('#status, #payment_method, #payment_type, #has_promo_code');
+    filterSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            // Uncomment the line below to enable auto-submit on filter change
+            // this.form.submit();
+        });
+    });
+});
 </script>
 @endpush
 @endsection

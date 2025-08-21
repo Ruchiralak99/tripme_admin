@@ -157,10 +157,17 @@
                            class="block w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors text-center">
                             Edit Payment
                         </a>
-                        <button onclick="deletePayment()"
-                                class="block w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors text-center">
-                            Delete Payment
-                        </button>
+                        <form method="POST"
+                              action="{{ route('super_admin.payments.delete', $payment->id) }}"
+                              style="display: inline-block;"
+                              onsubmit="return confirm('Are you sure you want to delete this payment? This action cannot be undone.')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                    class="block w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors text-center">
+                                Delete Payment
+                            </button>
+                        </form>
                     </div>
                 </div>
 
@@ -272,26 +279,38 @@
 <script>
 function deletePayment() {
     if (confirm('Are you sure you want to delete this payment? This action cannot be undone.')) {
+        // Create a form dynamically
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '{{ route("super_admin.payments.delete", $payment->id) }}';
+        form.action = '{{ url("super_admin/payments/" . $payment->id) }}';
+        form.style.display = 'none';
 
+        // Add CSRF token
         const csrfToken = document.createElement('input');
         csrfToken.type = 'hidden';
         csrfToken.name = '_token';
         csrfToken.value = '{{ csrf_token() }}';
 
+        // Add method override for DELETE
         const methodField = document.createElement('input');
         methodField.type = 'hidden';
         methodField.name = '_method';
         methodField.value = 'DELETE';
 
+        // Append inputs to form
         form.appendChild(csrfToken);
         form.appendChild(methodField);
+
+        // Append form to body and submit
         document.body.appendChild(form);
         form.submit();
     }
 }
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Payment view page loaded');
+});
 </script>
 @endpush
 @endsection
