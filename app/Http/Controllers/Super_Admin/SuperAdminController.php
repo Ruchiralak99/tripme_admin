@@ -1125,7 +1125,66 @@ class SuperAdminController extends Controller
 
     public function showHeliPaymentPage()
     {
-        return view('super_admin.helitours.payments.payments');
+        $payments = Payment::with(['booking', 'verifiedBy', 'promoCode'])
+                           ->orderBy('created_at', 'desc')
+                           ->paginate(15);
+
+        return view('super_admin.helitours.payments.payments', compact('payments'));
+    }
+
+    public function viewPaymentDetails($id)
+    {
+        $payment = Payment::with(['booking.ride', 'booking.city', 'booking.user', 'verifiedBy', 'promoCode'])->findOrFail($id);
+        return view('super_admin.helitours.payments.view', compact('payment'));
+    }
+
+    public function editPaymentDetails($id)
+    {
+        $payment = Payment::with(['booking', 'promoCode'])->findOrFail($id);
+        $promoCodes = PromoCode::where('status', 'active')->get();
+        return view('super_admin.helitours.payments.edit', compact('payment', 'promoCodes'));
+    }
+
+    public function updatePaymentDetails(Request $request, $id)
+    {
+        $payment = Payment::findOrFail($id);
+
+        $request->validate([
+            'amount' => 'required|numeric|min:0',
+            'payment_method' => 'required|in:bank_transfer,credit_card,cash,online',
+            'payment_type' => 'required|in:full,partial',
+            'reference_number' => 'nullable|string|max:255',
+            'admin_notes' => 'nullable|string',
+            'promo_code_id' => 'nullable|exists:promo_codes,id'
+        ]);
+
+        $payment->update([
+            'amount' => $request->amount,
+            'payment_method' => $request->payment_method,
+            'payment_type' => $request->payment_type,
+            'reference_number' => $request->reference_number,
+            'admin_notes' => $request->admin_notes,
+            'promo_code_id' => $request->promo_code_id,
+            'has_promo_code' => !empty($request->promo_code_id)
+        ]);
+
+        return redirect()->route('super_admin.payments')
+                         ->with('success', 'Payment updated successfully.');
+    }
+
+    public function deletePaymentRecord($id)
+    {
+        $payment = Payment::findOrFail($id);
+
+        // Delete payment slip file if exists
+        if ($payment->payment_slip_path && Storage::disk('public')->exists($payment->payment_slip_path)) {
+            Storage::disk('public')->delete($payment->payment_slip_path);
+        }
+
+        $payment->delete();
+
+        return redirect()->route('super_admin.payments')
+                         ->with('success', 'Payment deleted successfully.');
     }
 
 }
