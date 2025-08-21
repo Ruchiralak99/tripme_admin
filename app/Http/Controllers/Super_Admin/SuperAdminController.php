@@ -1118,4 +1118,14 @@ class SuperAdminController extends Controller
                         ->with('success', 'Booking deleted successfully!');
     }
 
+    public function showTourBookings()
+    {
+        return view('super_admin.helitours.bookings.tours.tour_bookings');
+    }
+
+    public function showHeliPaymentPage()
+    {
+        return view('super_admin.helitours.payments.payments');
+    }
+
 }

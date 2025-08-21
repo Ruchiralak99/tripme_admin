@@ -98,6 +98,13 @@ Route::middleware('auth')->group(function () {
         Route::put('/bookings/rides/{id}', [SuperAdminController::class, 'updateRideBooking'])->name('bookings.rides.update');
         Route::delete('/bookings/rides/{id}', [SuperAdminController::class, 'destroyRideBooking'])->name('bookings.rides.destroy');
 
+        // Tour Booking Routes
+
+        Route::get('/bookings/tours', [SuperAdminController::class, 'showTourBookings'])->name('bookings.tours.bookings');
+
+        // Heli Tours Payment Routes
+        Route::get('/payments', [SuperAdminController::class, 'showHeliPaymentPage'])->name('payments');
+
     });
 
 
