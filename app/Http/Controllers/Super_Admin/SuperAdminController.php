@@ -194,7 +194,7 @@ class SuperAdminController extends Controller
 
     public function showPackages()
     {
-        return view('super_admin.packages.packages');
+        return view('super_admin.helitours.packages.packages');
     }
 
     // Air Taxi Package Management
@@ -239,7 +239,7 @@ class SuperAdminController extends Controller
             ]
         ];
 
-        return view('super_admin.packages.air_taxi.air_taxi', compact('airTaxiServices', 'aircrafts'));
+        return view('super_admin.helitours.packages.air_taxi.air_taxi', compact('airTaxiServices', 'aircrafts'));
     }
 
     public function storeAirTaxiBooking(Request $request)
@@ -288,13 +288,13 @@ class SuperAdminController extends Controller
     public function rides()
     {
         $ridesCategories = Ride::orderBy('created_at', 'desc')->get();
-        return view('super_admin.packages.rides.rides', compact('ridesCategories'));
+        return view('super_admin.helitours.packages.rides.rides', compact('ridesCategories'));
     }
 
     // Create new ride category
     public function createRideCategory()
     {
-        return view('super_admin.packages.rides.rides_create');
+        return view('super_admin.helitours.packages.rides.rides_create');
     }
 
     // Store ride category
@@ -351,7 +351,7 @@ class SuperAdminController extends Controller
     public function editRideCategory($id)
     {
         $ride = Ride::findOrFail($id);
-        return view('super_admin.packages.rides.rides_edit', compact('ride'));
+        return view('super_admin.helitours.packages.rides.rides_edit', compact('ride'));
     }
 
     // Update ride category
@@ -430,7 +430,7 @@ class SuperAdminController extends Controller
     public function rideCities()
     {
         $cities = RideCity::orderBy('created_at', 'desc')->get();
-        return view('super_admin.packages.rides.cities', compact('cities'));
+        return view('super_admin.helitours.packages.rides.cities', compact('cities'));
     }
 
     public function rideCitiesStore(Request $request)
@@ -467,7 +467,7 @@ class SuperAdminController extends Controller
     public function showBookingForm(Ride $ride)
     {
         $cities = RideCity::where('status', 'active')->orderBy('name')->get();
-        return view('super_admin.packages.rides.book', compact('ride', 'cities'));
+        return view('super_admin.helitours.packages.rides.book', compact('ride', 'cities'));
     }
 
     public function validatePromoCode(Request $request)
@@ -613,7 +613,9 @@ class SuperAdminController extends Controller
                     'payment_type' => $request->payment_type,
                     'reference_number' => $request->reference_number,
                     'payment_slip_path' => $paymentSlipPath,
-                    'status' => 'pending'
+                    'status' => 'pending',
+                    'has_promo_code' => $promoCode ? true : false,
+                    'promo_code_id' => $promoCode ? $promoCode->id : null
                 ]);
             }
 
@@ -684,19 +686,19 @@ class SuperAdminController extends Controller
             ]
         ];
 
-        return view('super_admin.packages.tours.tours', compact('tourPackages'));
+        return view('super_admin.helitours.packages.tours.tours', compact('tourPackages'));
     }
 
     public function showAirCrafts()
     {
         $aircrafts = Aircraft::latest()->get();
-        return view('super_admin.aircrafts.aircrafts', compact('aircrafts'));
+        return view('super_admin.helitours.aircrafts.aircrafts', compact('aircrafts'));
     }
 
     // Create aircraft form
     public function createAircraft()
     {
-        return view('super_admin.aircrafts.aircrafts_create');
+        return view('super_admin.helitours.aircrafts.aircrafts_create');
     }
 
     // Store aircraft
@@ -734,7 +736,7 @@ class SuperAdminController extends Controller
     public function editAircraft($id)
     {
         $aircraft = Aircraft::findOrFail($id);
-        return view('super_admin.aircrafts.aircrafts_edit', compact('aircraft'));
+        return view('super_admin.helitours.aircrafts.aircrafts_edit', compact('aircraft'));
     }
 
     // Update aircraft
@@ -774,7 +776,7 @@ class SuperAdminController extends Controller
     public function viewAircraft($id)
     {
         $aircraft = Aircraft::findOrFail($id);
-        return view('super_admin.aircrafts.aircrafts_view', compact('aircraft'));
+        return view('super_admin.helitours.aircrafts.aircrafts_view', compact('aircraft'));
     }
 
     // Delete aircraft
@@ -831,20 +833,20 @@ class SuperAdminController extends Controller
         }
 
         $airTaxiBookings = $query->latest()->paginate(15);
-        return view('super_admin.bookings.air_taxi.air_taxi_bookings', compact('airTaxiBookings'));
+        return view('super_admin.helitours.bookings.air_taxi.air_taxi_bookings', compact('airTaxiBookings'));
     }
 
     public function viewAirTaxiBooking($id)
     {
         $booking = AirTaxiBooking::with(['user', 'aircraft'])->findOrFail($id);
-        return view('super_admin.bookings.air_taxi.view', compact('booking'));
+        return view('super_admin.helitours.bookings.air_taxi.view', compact('booking'));
     }
 
     public function editAirTaxiBooking($id)
     {
         $booking = AirTaxiBooking::with(['user', 'aircraft'])->findOrFail($id);
         $aircrafts = Aircraft::where('status', true)->get();
-        return view('super_admin.bookings.air_taxi.edit', compact('booking', 'aircrafts'));
+        return view('super_admin.helitours.bookings.air_taxi.edit', compact('booking', 'aircrafts'));
     }
 
     public function updateAirTaxiBooking(Request $request, $id)
@@ -919,12 +921,12 @@ class SuperAdminController extends Controller
     public function promoCodes()
     {
         $promoCodes = PromoCode::latest()->paginate(15);
-        return view('super_admin.promocodes.promo_code', compact('promoCodes'));
+        return view('super_admin.helitours.promocodes.promo_code', compact('promoCodes'));
     }
 
     public function createPromoCode()
     {
-        return view('super_admin.promocodes.create');
+        return view('super_admin.helitours.promocodes.create');
     }
 
     public function storePromoCode(Request $request)
@@ -964,13 +966,13 @@ class SuperAdminController extends Controller
     public function viewPromoCode($id)
     {
         $promoCode = PromoCode::findOrFail($id);
-        return view('super_admin.promocodes.view', compact('promoCode'));
+        return view('super_admin.helitours.promocodes.view', compact('promoCode'));
     }
 
     public function editPromoCode($id)
     {
         $promoCode = PromoCode::findOrFail($id);
-        return view('super_admin.promocodes.edit', compact('promoCode'));
+        return view('super_admin.helitours.promocodes.edit', compact('promoCode'));
     }
 
     public function updatePromoCode(Request $request, $id)
@@ -1016,6 +1018,114 @@ class SuperAdminController extends Controller
 
         return redirect()->route('super_admin.promo_codes')
                         ->with('success', 'Promo code deleted successfully!');
+    }
+
+    public function showRideBookings(Request $request)
+    {
+        $query = RideBooking::with(['ride', 'city', 'user', 'payments']);
+
+        // Search functionality
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('booking_reference', 'like', "%{$search}%")
+                  ->orWhere('full_name', 'like', "%{$search}%")
+                  ->orWhere('phone_number', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhereHas('ride', function($rideQuery) use ($search) {
+                      $rideQuery->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // Status filter
+        if ($request->has('status') && $request->status) {
+            $query->where('status', $request->status);
+        }
+
+        // Payment type filter
+        if ($request->has('payment_type') && $request->payment_type) {
+            $query->where('payment_type', $request->payment_type);
+        }
+
+        // Promo code filter
+        if ($request->has('promo_filter') && $request->promo_filter) {
+            if ($request->promo_filter === 'with_promo') {
+                $query->whereNotNull('promo_code');
+            } elseif ($request->promo_filter === 'without_promo') {
+                $query->whereNull('promo_code');
+            }
+        }
+
+        // Date range filter
+        if ($request->has('date_from') && $request->date_from) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+        if ($request->has('date_to') && $request->date_to) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $rideBookings = $query->orderBy('created_at', 'desc')->paginate(15);
+
+        // Get filter options
+        $statuses = ['pending', 'confirmed', 'cancelled', 'completed'];
+        $paymentTypes = ['tentative', 'partial', 'full'];
+
+        return view('super_admin.helitours.bookings.rides.ride_bookings', compact('rideBookings', 'statuses', 'paymentTypes'));
+    }
+
+    public function showRideBooking($id)
+    {
+        $booking = RideBooking::with(['ride', 'city', 'user', 'payments.promoCode'])->findOrFail($id);
+        return view('super_admin.helitours.bookings.rides.view', compact('booking'));
+    }
+
+    public function editRideBooking($id)
+    {
+        $booking = RideBooking::with(['ride', 'city'])->findOrFail($id);
+        $rides = Ride::where('status', 'active')->get();
+        $cities = RideCity::all();
+        return view('super_admin.helitours.bookings.rides.edit', compact('booking', 'rides', 'cities'));
+    }
+
+    public function updateRideBooking(Request $request, $id)
+    {
+        $booking = RideBooking::findOrFail($id);
+
+        $validated = $request->validate([
+            'status' => 'required|in:pending,confirmed,cancelled,completed',
+            'confirmed_date' => 'nullable|date',
+            'additional_notes' => 'nullable|string'
+        ]);
+
+        $booking->update($validated);
+
+        return redirect()->route('super_admin.bookings.rides.bookings')
+                        ->with('success', 'Booking updated successfully!');
+    }
+
+    public function destroyRideBooking($id)
+    {
+        $booking = RideBooking::findOrFail($id);
+
+        // Delete associated payments first
+        $booking->payments()->delete();
+
+        // Delete the booking
+        $booking->delete();
+
+        return redirect()->route('super_admin.bookings.rides.bookings')
+                        ->with('success', 'Booking deleted successfully!');
+    }
+
+    public function showTourBookings()
+    {
+        return view('super_admin.helitours.bookings.tours.tour_bookings');
+    }
+
+    public function showHeliPaymentPage()
+    {
+        return view('super_admin.helitours.payments.payments');
     }
 
 }
