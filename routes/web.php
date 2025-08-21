@@ -104,6 +104,10 @@ Route::middleware('auth')->group(function () {
 
         // Heli Tours Payment Routes
         Route::get('/payments', [SuperAdminController::class, 'showHeliPaymentPage'])->name('payments');
+        Route::get('/payments/{id}/view', [SuperAdminController::class, 'viewPaymentDetails'])->name('payments.view');
+        Route::get('/payments/{id}/edit', [SuperAdminController::class, 'editPaymentDetails'])->name('payments.edit');
+        Route::put('/payments/{id}', [SuperAdminController::class, 'updatePaymentDetails'])->name('payments.update');
+        Route::delete('/payments/{id}', [SuperAdminController::class, 'deletePaymentRecord'])->name('payments.delete');
 
     });
 

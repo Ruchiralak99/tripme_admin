@@ -1123,9 +1123,147 @@ class SuperAdminController extends Controller
         return view('super_admin.helitours.bookings.tours.tour_bookings');
     }
 
-    public function showHeliPaymentPage()
+    public function showHeliPaymentPage(Request $request)
     {
-        return view('super_admin.helitours.payments.payments');
+        $query = Payment::with(['booking', 'verifiedBy', 'promoCode']);
+
+        // Search functionality
+        if ($request->filled('search')) {
+            $search = $request->get('search');
+            $query->where(function($q) use ($search) {
+                $q->where('payment_reference', 'like', '%' . $search . '%')
+                  ->orWhere('reference_number', 'like', '%' . $search . '%')
+                  ->orWhere('amount', 'like', '%' . $search . '%')
+                  ->orWhereHas('booking', function($bookingQuery) use ($search) {
+                      $bookingQuery->where('booking_reference', 'like', '%' . $search . '%')
+                                   ->orWhere('customer_name', 'like', '%' . $search . '%')
+                                   ->orWhere('customer_phone', 'like', '%' . $search . '%');
+                  });
+            });
+        }
+
+        // Filter by payment status
+        if ($request->filled('status')) {
+            $query->where('status', $request->get('status'));
+        }
+
+        // Filter by payment method
+        if ($request->filled('payment_method')) {
+            $query->where('payment_method', $request->get('payment_method'));
+        }
+
+        // Filter by payment type
+        if ($request->filled('payment_type')) {
+            $query->where('payment_type', $request->get('payment_type'));
+        }
+
+        // Filter by promo code usage
+        if ($request->filled('has_promo_code')) {
+            if ($request->get('has_promo_code') === 'yes') {
+                $query->where('has_promo_code', true);
+            } elseif ($request->get('has_promo_code') === 'no') {
+                $query->where('has_promo_code', false);
+            }
+        }
+
+        // Filter by specific promo code
+        if ($request->filled('promo_code_id')) {
+            $query->where('promo_code_id', $request->get('promo_code_id'));
+        }
+
+        // Date range filter
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->get('date_from'));
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->get('date_to'));
+        }
+
+        // Amount range filter
+        if ($request->filled('amount_min')) {
+            $query->where('amount', '>=', $request->get('amount_min'));
+        }
+
+        if ($request->filled('amount_max')) {
+            $query->where('amount', '<=', $request->get('amount_max'));
+        }
+
+        $payments = $query->orderBy('created_at', 'desc')->paginate(15);
+
+        // Get filter data for dropdowns
+        $promoCodes = PromoCode::where('status', 'active')->orderBy('code')->get();
+        $paymentMethods = ['bank_transfer', 'credit_card', 'cash', 'online'];
+        $paymentTypes = ['full', 'partial'];
+        $statuses = ['pending', 'verified', 'rejected'];
+
+        return view('super_admin.helitours.payments.payments', compact(
+            'payments',
+            'promoCodes',
+            'paymentMethods',
+            'paymentTypes',
+            'statuses'
+        ));
+    }
+
+    public function viewPaymentDetails($id)
+    {
+        $payment = Payment::with(['booking.ride', 'booking.city', 'booking.user', 'verifiedBy', 'promoCode'])->findOrFail($id);
+        return view('super_admin.helitours.payments.view', compact('payment'));
+    }
+
+    public function editPaymentDetails($id)
+    {
+        $payment = Payment::with(['booking', 'promoCode'])->findOrFail($id);
+        $promoCodes = PromoCode::where('status', 'active')->get();
+        return view('super_admin.helitours.payments.edit', compact('payment', 'promoCodes'));
+    }
+
+    public function updatePaymentDetails(Request $request, $id)
+    {
+        $payment = Payment::findOrFail($id);
+
+        $request->validate([
+            'amount' => 'required|numeric|min:0',
+            'payment_method' => 'required|in:bank_transfer,credit_card,cash,online',
+            'payment_type' => 'required|in:full,partial',
+            'reference_number' => 'nullable|string|max:255',
+            'admin_notes' => 'nullable|string',
+            'promo_code_id' => 'nullable|exists:promo_codes,id'
+        ]);
+
+        $payment->update([
+            'amount' => $request->amount,
+            'payment_method' => $request->payment_method,
+            'payment_type' => $request->payment_type,
+            'reference_number' => $request->reference_number,
+            'admin_notes' => $request->admin_notes,
+            'promo_code_id' => $request->promo_code_id,
+            'has_promo_code' => !empty($request->promo_code_id)
+        ]);
+
+        return redirect()->route('super_admin.payments')
+                         ->with('success', 'Payment updated successfully.');
+    }
+
+    public function deletePaymentRecord($id)
+    {
+        try {
+            $payment = Payment::findOrFail($id);
+
+            // Delete payment slip file if exists
+            if ($payment->payment_slip_path && Storage::disk('public')->exists($payment->payment_slip_path)) {
+                Storage::disk('public')->delete($payment->payment_slip_path);
+            }
+
+            $payment->delete();
+
+            return redirect()->route('super_admin.payments')
+                             ->with('success', 'Payment deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('super_admin.payments')
+                             ->with('error', 'Failed to delete payment. Please try again.');
+        }
     }
 
 }
