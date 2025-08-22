@@ -10,18 +10,17 @@
       <p class="text-slate-600 mt-1">Here's what's happening with your travel business today.</p>
     </div>
     <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
-      <button class="inline-flex items-center justify-center px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors duration-200 text-sm font-medium">
+      {{-- <button class="inline-flex items-center justify-center px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 transition-colors duration-200 text-sm font-medium">
         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
         </svg>
         Export Report
-      </button>
+      </button> --}}
+      <a href="{{ route('super_admin.user_management') }}">
       <button class="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg hover:from-primary-600 hover:to-primary-700 transition-all duration-200 text-sm font-medium shadow-lg shadow-primary-500/25">
-        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-        </svg>
-        Add New Package
+        View Users
       </button>
+      </a>
     </div>
   </div>
 </div>
@@ -38,13 +37,13 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
           </svg>
         </div>
-        <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-1 rounded-full">Today</span>
+        <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-1 rounded-full">All Heli Tour Bookings</span>
       </div>
-      <div class="text-3xl font-bold text-slate-900 mb-1">24</div>
-      <div class="text-sm text-slate-600">Active Bookings</div>
+      <div class="text-3xl font-bold text-slate-900 mb-1">{{ $totalBookings }}</div>
+      <div class="text-sm text-slate-600">Bookings</div>
       <div class="flex items-center mt-3 text-xs">
-        <span class="text-green-600 font-medium">+12%</span>
-        <span class="text-slate-500 ml-1">from yesterday</span>
+        <span class="text-green-600 font-medium">{{ $weekBookingsPercentage }}%</span>
+        <span class="text-slate-500 ml-1">from last week as Precentage</span>
       </div>
     </div>
   </div>
@@ -61,11 +60,11 @@
         </div>
         <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-1 rounded-full">All time</span>
       </div>
-      <div class="text-3xl font-bold text-slate-900 mb-1">1,482</div>
+      <div class="text-3xl font-bold text-slate-900 mb-1">{{ $totalUsers }}</div>
       <div class="text-sm text-slate-600">Total Users</div>
       <div class="flex items-center mt-3 text-xs">
-        <span class="text-green-600 font-medium">+23%</span>
-        <span class="text-slate-500 ml-1">this month</span>
+        <span class="text-green-600 font-medium">{{ $activeUsersPercentage }}%</span>
+        <span class="text-slate-500 ml-1">Users are Active</span>
       </div>
     </div>
   </div>

@@ -32,6 +32,13 @@
       }
     }
   </script>
+
+  <style>
+      .active {
+      background-color: #bc1f21;
+      color: white;
+    }
+  </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 text-slate-800 font-sans antialiased">
 
@@ -72,8 +79,8 @@
           <nav class="flex-1 px-4 py-6 space-y-2">
             <div class="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">Management</div>
 
-            <a href="{{ route('super_admin.dashboard') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl bg-primary-500/10 text-primary-400 border border-primary-500/20 transition-all duration-200">
-              <div class="flex items-center justify-center h-8 w-8 rounded-lg bg-primary-500/20 group-hover:bg-primary-500/30 transition-colors">
+            <a href="{{ route('super_admin.dashboard') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200 <?php if(Route::currentRouteName() == 'super_admin.dashboard') { echo 'bg-primary-500/20 border border-primary-500/30'; } ?>">
+              <div class="flex items-center justify-center h-8 w-8 rounded-lg bg-slate-700/50 group-hover:bg-slate-600 transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z"></path>
@@ -82,7 +89,7 @@
               <span class="font-medium">Dashboard</span>
             </a>
 
-            <a href="{{ route('super_admin.user_management') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200">
+            <a href="{{ route('super_admin.user_management') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200 <?php if(Route::currentRouteName() == 'super_admin.user_management') { echo 'bg-primary-500/20 border border-primary-500/30'; } ?>">
               <div class="flex items-center justify-center h-8 w-8 rounded-lg bg-slate-700/50 group-hover:bg-slate-600 transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
@@ -91,16 +98,19 @@
               <span class="font-medium">User Management</span>
             </a>
 
-            <a href="{{ route('super_admin.packages') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200">
+            <div class="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mt-8">
+                            Heli Tours</div>
+
+            <a href="{{ route('super_admin.packages') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200 <?php if(Route::currentRouteName() == 'super_admin.packages') { echo 'bg-primary-500/20 border border-primary-500/30'; } ?>">
               <div class="flex items-center justify-center h-8 w-8 rounded-lg bg-slate-700/50 group-hover:bg-slate-600 transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M9 5v.01M15 5v.01"></path>
                 </svg>
               </div>
-              <span class="font-medium">HeliTours - Package Management</span>
+              <span class="font-medium">Package Management</span>
             </a>
 
-            <a href="{{ route('super_admin.aircrafts') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200">
+            <a href="{{ route('super_admin.aircrafts') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200 <?php if(Route::currentRouteName() == 'super_admin.aircrafts') { echo 'bg-primary-500/20 border border-primary-500/30'; } ?>">
               <div class="flex items-center justify-center h-8 w-8 rounded-lg bg-slate-700/50 group-hover:bg-slate-600 transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
@@ -109,49 +119,49 @@
               <span class="font-medium">Air Craft Management</span>
             </a>
 
-            <a href="{{ route('super_admin.promo_codes') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200">
+            <a href="{{ route('super_admin.promo_codes') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200 <?php if(Route::currentRouteName() == 'super_admin.promo_codes') { echo 'bg-primary-500/20 border border-primary-500/30'; } ?>">
               <div class="flex items-center justify-center h-8 w-8 rounded-lg bg-slate-700/50 group-hover:bg-slate-600 transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                 </svg>
               </div>
-              <span class="font-medium">HeliTours - Promo Code Management</span>
+              <span class="font-medium">Promo Code Management</span>
             </a>
 
-            <a href="{{ route('super_admin.bookings.air_taxi.bookings') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200">
+            <a href="{{ route('super_admin.bookings.air_taxi.bookings') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200 <?php if(Route::currentRouteName() == 'super_admin.bookings.air_taxi.bookings') { echo 'bg-primary-500/20 border border-primary-500/30'; } ?>">
               <div class="flex items-center justify-center h-8 w-8 rounded-lg bg-slate-700/50 group-hover:bg-slate-600 transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                 </svg>
               </div>
-              <span class="font-medium">HeliTours - Air Taxi Bookings</span>
+              <span class="font-medium">Air Taxi Bookings</span>
             </a>
 
-            <a href="{{ route('super_admin.bookings.rides.bookings') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200">
+            <a href="{{ route('super_admin.bookings.rides.bookings') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200 <?php if(Route::currentRouteName() == 'super_admin.bookings.rides.bookings') { echo 'bg-primary-500/20 border border-primary-500/30'; } ?>">
               <div class="flex items-center justify-center h-8 w-8 rounded-lg bg-slate-700/50 group-hover:bg-slate-600 transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                 </svg>
               </div>
-              <span class="font-medium">HeliTours - Ride Bookings</span>
+              <span class="font-medium">Ride Bookings</span>
             </a>
 
-            <a href="{{ route('super_admin.bookings.tours.bookings') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200">
+            <a href="{{ route('super_admin.bookings.tours.bookings') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200 <?php if(Route::currentRouteName() == 'super_admin.bookings.tours.bookings') { echo 'bg-primary-500/20 border border-primary-500/30'; } ?>">
               <div class="flex items-center justify-center h-8 w-8 rounded-lg bg-slate-700/50 group-hover:bg-slate-600 transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                 </svg>
               </div>
-              <span class="font-medium">HeliTours - Tour Bookings</span>
+              <span class="font-medium">Tour Bookings</span>
             </a>
 
-            <a href="{{ route('super_admin.payments') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200">
+            <a href="{{ route('super_admin.payments') }}" class="group flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-slate-700/50 text-slate-300 hover:text-white transition-all duration-200 <?php if(Route::currentRouteName() == 'super_admin.payments') { echo 'bg-primary-500/20 border border-primary-500/30'; } ?>">
               <div class="flex items-center justify-center h-8 w-8 rounded-lg bg-slate-700/50 group-hover:bg-slate-600 transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                 </svg>
               </div>
-              <span class="font-medium">HeliTours - Payment Management</span>
+              <span class="font-medium">Payment Management</span>
             </a>
 
             <div class="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mt-8">Account</div>

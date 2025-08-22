@@ -26,10 +26,15 @@ class SuperAdminController extends Controller
     {
         $totalUsers = User::count();
         $activeUsers = User::where('is_active', true)->count();
+        $activeUsersPercentage = $totalUsers > 0 ? ($activeUsers / $totalUsers) * 100 : 0;
         $vendorUsers = User::where('role', 'vendor')->count();
         $affiliateUsers = User::where('role', 'affiliate')->count();
 
-        return view('super_admin.index', compact('totalUsers', 'activeUsers', 'vendorUsers', 'affiliateUsers'));
+        $totalBookings = RideBooking::count() + AirTaxiBooking::count();
+        $weekBookings = RideBooking::where('created_at', '>=', now()->subWeek())->count() + AirTaxiBooking::where('created_at', '>=', now()->subWeek())->count();
+        $weekBookingsPercentage = $totalBookings > 0 ? (($weekBookings / $totalBookings) * 100) : 0;
+
+        return view('super_admin.index', compact('totalUsers', 'activeUsers', 'activeUsersPercentage', 'vendorUsers', 'affiliateUsers', 'totalBookings', 'weekBookings', 'weekBookingsPercentage'));
     }
 
     public function userManagement(Request $request)

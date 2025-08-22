@@ -48,7 +48,7 @@
                     </div>
                 </div>
                 <div class="flex space-x-2 mt-7">
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">
+                    <button type="submit" class="bg-red-500 hover:bg-red-700 text-white px-6 py-2 rounded-lg">
                         Search
                     </button>
                     <a href="{{ route('super_admin.payments') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg">
@@ -178,10 +178,10 @@
 
                     <!-- Filter Actions -->
                     <div class="flex items-end space-x-2">
-                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg">
+                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg">
                             Apply Filters
                         </button>
-                        <a href="{{ route('super_admin.payments') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg">
+                        <a href="{{ route('super_admin.payments') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-2 rounded-lg">
                             Reset All
                         </a>
                     </div>
