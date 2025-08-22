@@ -61,10 +61,10 @@
                                     Amount <span class="text-red-500">*</span>
                                 </label>
                                 <div class="relative">
-                                    <span class="absolute left-3 top-2 text-gray-500">$</span>
+                                    <span class="absolute left-3 top-2 text-gray-500">LKR</span>
                                     <input type="number" name="amount" id="amount"
                                         value="{{ old('amount', $payment->amount) }}" step="0.01" min="0" required
-                                        class="w-full border rounded-md pl-8 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500
+                                        class="w-full border rounded-md pl-12 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500
            {{ $errors->has('amount') ? 'border-red-500' : 'border-gray-300' }}">
 
                                 </div>
@@ -162,7 +162,7 @@
                                             @if ($promoCode->discount_type === 'percentage')
                                                 {{ $promoCode->discount_value }}% off
                                             @else
-                                                ${{ number_format($promoCode->discount_value, 2) }} off
+                                                LKR {{ number_format($promoCode->discount_value, 2) }} off
                                             @endif
                                         </option>
                                     @endforeach
