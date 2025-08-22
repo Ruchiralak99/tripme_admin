@@ -63,6 +63,7 @@
                                        step="0.01" min="0" required
                                        class="w-full border border-gray-300 rounded-md pl-8 pr-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 @error('amount') border-red-500 @enderror">
                             </div>
+
                             @error('amount')
                                 <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                             @enderror
